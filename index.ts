@@ -11,7 +11,9 @@ declare const process : {
 const program = caporal as any;
 
 (program as Caporal)
-  .version('1.0.0')
+  .version('1.0.1')
+  .name('Lexigram-CLI')
+  .bin('lexigram')
   .command('login', 'Authenticate with Amazon.')
   .help('Login to or switch to a different Amazon account.')
   .action(loginOrSwitch)

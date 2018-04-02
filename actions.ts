@@ -7,7 +7,9 @@ import * as Listr from 'listr';
 import * as unzip from 'unzip-stream';
 import * as promisePipe from 'promisepipe';
 import * as _ from 'lodash';
-import * as onezip from 'onezip';
+import * as archiver from 'archiver-promise';
+import * as path from 'path';
+import * as process from 'process';
 import axios from 'axios';
 
 import ParseIni from './ParseIni';
@@ -98,8 +100,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
   let uri = '';
   let changeApi = false;
 
-  if (fs.existsSync(args.skill)) {
-    const skillJson = args.skill === 'kanzi' ? './kanzi-skill.json' : './koko-skill.json';
+  if (fs.existsSync(args.skill) && fs.existsSync(`${args.skill}/skill.json`)) {
     const existingSkillConfig = fse.readJsonSync(`${args.skill}/skill.json`);
 
     if (_.hasIn(existingSkillConfig, 'skillManifest.apis.custom.endpoint.uri') || _.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
@@ -233,8 +234,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     {
       title: 'Update skill data',
       task: ctx => {
-        const skillJson = args.skill === 'kanzi' ? './kanzi-skill.json' : './koko-skill.json';
-        const skillConfig = fse.readJsonSync(skillJson);
+        const skillJson = args.skill === 'kanzi' ? 'kanzi-skill.json' : 'koko-skill.json';
+        const skillConfig = fse.readJsonSync(`${__dirname}/../${skillJson}`);
 
         if (changeApi) {
           delete skillConfig.skillManifest.apis;
@@ -413,16 +414,13 @@ export const generateZip = (args, options, logger) => {
       title: 'Create deployment zip file',
       task: async ctx => {
         fse.removeSync(`${ctx.dir}-lambda-upload.zip`);
-        const srcDirFiles = fs.readdirSync(`${ctx.dir}/lambda/skill`);
-        const pack = onezip.pack(`${ctx.dir}/lambda/skill`, `${ctx.dir}-lambda-upload.zip`, srcDirFiles);
 
-        pack.on('error', (error) => {
-          throw new Error('Could not create zip file. Please try again.');
+        const archive = archiver(`${ctx.dir}-lambda-upload.zip`, {
+          zlib: { level: 9 }
         });
 
-        pack.on('end', () => {
-          return;
-        });
+        archive.directory(`${ctx.dir}/lambda/skill`, false);
+        await archive.finalize();
       }
     }
   ]);

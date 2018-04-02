@@ -1,6 +1,6 @@
 {
   "name": "lexigram-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI for getting Kanzi and Koko skills for Kodi working as fast as possible",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,14 @@
   "bin": {
     "lexigram": "dist/index.js"
   },
-  "author": "Joe Ipson",
+  "author": "Joe Ipson <joe@ipson.me>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m0ngr31/lexigram-cli"
+  },
   "dependencies": {
+    "archiver-promise": "^1.0.0",
     "ask-cli": "1.1.2",
     "axios": "^0.18.0",
     "caporal": "^0.9.0",
@@ -20,7 +25,6 @@
     "fs-extra": "^5.0.0",
     "listr": "^0.13.0",
     "lodash": "^4.17.5",
-    "onezip": "^1.0.13",
     "promisepipe": "^2.1.2",
     "readline-sync": "^1.4.9",
     "unzip-stream": "^0.3.0"

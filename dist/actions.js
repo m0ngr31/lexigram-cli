@@ -45,7 +45,7 @@ var Listr = require("listr");
 var unzip = require("unzip-stream");
 var promisePipe = require("promisepipe");
 var _ = require("lodash");
-var onezip = require("onezip");
+var archiver = require("archiver-promise");
 var axios_1 = require("axios");
 var ParseIni_1 = require("./ParseIni");
 var InteractionModel_1 = require("./InteractionModel");
@@ -137,7 +137,7 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
 }); };
 exports.updateOrDeploySkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
     var _this = this;
-    var jsonOptions, getInput, answer, uri, changeApi, skillJson, existingSkillConfig, tasks;
+    var jsonOptions, getInput, answer, uri, changeApi, existingSkillConfig, tasks;
     return __generator(this, function (_a) {
         jsonOptions = {
             spaces: 2
@@ -146,8 +146,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
         answer = '';
         uri = '';
         changeApi = false;
-        if (fs.existsSync(args.skill)) {
-            skillJson = args.skill === 'kanzi' ? './kanzi-skill.json' : './koko-skill.json';
+        if (fs.existsSync(args.skill) && fs.existsSync(args.skill + "/skill.json")) {
             existingSkillConfig = fse.readJsonSync(args.skill + "/skill.json");
             if (_.hasIn(existingSkillConfig, 'skillManifest.apis.custom.endpoint.uri') || _.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
                 getInput = false;
@@ -288,8 +287,8 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Update skill data',
                 task: function (ctx) {
-                    var skillJson = args.skill === 'kanzi' ? './kanzi-skill.json' : './koko-skill.json';
-                    var skillConfig = fse.readJsonSync(skillJson);
+                    var skillJson = args.skill === 'kanzi' ? 'kanzi-skill.json' : 'koko-skill.json';
+                    var skillConfig = fse.readJsonSync(__dirname + "/../" + skillJson);
                     if (changeApi) {
                         delete skillConfig.skillManifest.apis;
                         skillConfig.skillManifest.apis = {
@@ -488,18 +487,20 @@ exports.generateZip = function (args, options, logger) {
         {
             title: 'Create deployment zip file',
             task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var srcDirFiles, pack;
+                var archive;
                 return __generator(this, function (_a) {
-                    fse.removeSync(ctx.dir + "-lambda-upload.zip");
-                    srcDirFiles = fs.readdirSync(ctx.dir + "/lambda/skill");
-                    pack = onezip.pack(ctx.dir + "/lambda/skill", ctx.dir + "-lambda-upload.zip", srcDirFiles);
-                    pack.on('error', function (error) {
-                        throw new Error('Could not create zip file. Please try again.');
-                    });
-                    pack.on('end', function () {
-                        return;
-                    });
-                    return [2 /*return*/];
+                    switch (_a.label) {
+                        case 0:
+                            fse.removeSync(ctx.dir + "-lambda-upload.zip");
+                            archive = archiver(ctx.dir + "-lambda-upload.zip", {
+                                zlib: { level: 9 }
+                            });
+                            archive.directory(ctx.dir + "/lambda/skill", false);
+                            return [4 /*yield*/, archive.finalize()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
                 });
             }); }
         }

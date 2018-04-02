@@ -23,3 +23,6 @@ lexigram deploy [skill]
 
 ## Options
 [skill]: kazni or koko (default: kazni)
+
+## Tutorial
+For information about how to use this, please go to https://lexigr.am

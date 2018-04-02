@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
+import * as path from 'path';
+import * as process from 'process';
 import axios from 'axios';
 
 export const getIntents = (skill, lang) => {
@@ -8,12 +10,13 @@ export const getIntents = (skill, lang) => {
   let file;
 
   if (lang === 'en') {
-    file = `./${skill}/lambda/repo/speech_assets/SampleUtterances.en.txt`;
+    file = path.join(process.cwd(), `${skill}/lambda/repo/speech_assets/SampleUtterances.en.txt`);
   } else {
-    file = `./${skill}/lambda/repo/speech_assets/SampleUtterances.de.txt`;
+    file = path.join(process.cwd(), `${skill}/lambda/repo/speech_assets/SampleUtterances.de.txt`);
   }
 
-  const parsedIntents = fse.readJsonSync(`./${skill}/lambda/repo/speech_assets/IntentSchema.json`);
+  const intentsFile = path.join(process.cwd(), `${skill}/lambda/repo/speech_assets/IntentSchema.json`)
+  const parsedIntents = fse.readJsonSync(intentsFile);
 
   const rawUtterances = fs.readFileSync(file, 'utf8');
   const utterances = rawUtterances.split(/\n/i);

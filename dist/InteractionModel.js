@@ -47,17 +47,20 @@ exports.__esModule = true;
 var _ = require("lodash");
 var fs = require("fs");
 var fse = require("fs-extra");
+var path = require("path");
+var process = require("process");
 var axios_1 = require("axios");
 exports.getIntents = function (skill, lang) {
     var intents = [];
     var file;
     if (lang === 'en') {
-        file = "./" + skill + "/lambda/repo/speech_assets/SampleUtterances.en.txt";
+        file = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/SampleUtterances.en.txt");
     }
     else {
-        file = "./" + skill + "/lambda/repo/speech_assets/SampleUtterances.de.txt";
+        file = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/SampleUtterances.de.txt");
     }
-    var parsedIntents = fse.readJsonSync("./" + skill + "/lambda/repo/speech_assets/IntentSchema.json");
+    var intentsFile = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/IntentSchema.json");
+    var parsedIntents = fse.readJsonSync(intentsFile);
     var rawUtterances = fs.readFileSync(file, 'utf8');
     var utterances = rawUtterances.split(/\n/i);
     _.forEach(parsedIntents.intents, function (intent) {
