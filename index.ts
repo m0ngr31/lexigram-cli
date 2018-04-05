@@ -15,6 +15,7 @@ const program = caporal as any;
   .name('Lexigram-CLI')
   .bin('lexigram')
   .command('login', 'Authenticate with Amazon.')
+  .option('--no-browser <noBrowser>', 'Login without browser', program.BOOL, false)
   .help('Login to or switch to a different Amazon account.')
   .action(loginOrSwitch)
   .command('init-config', 'Generates a config file in the current directory for you to put in your server information.')

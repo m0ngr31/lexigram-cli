@@ -9,6 +9,7 @@ program
     .name('Lexigram-CLI')
     .bin('lexigram')
     .command('login', 'Authenticate with Amazon.')
+    .option('--no-browser <noBrowser>', 'Login without browser', program.BOOL, false)
     .help('Login to or switch to a different Amazon account.')
     .action(actions_1.loginOrSwitch)
     .command('init-config', 'Generates a config file in the current directory for you to put in your server information.')

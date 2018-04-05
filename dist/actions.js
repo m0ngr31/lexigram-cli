@@ -51,7 +51,12 @@ var ParseIni_1 = require("./ParseIni");
 var InteractionModel_1 = require("./InteractionModel");
 var askPath = __dirname + "/../node_modules/.bin/ask";
 exports.loginOrSwitch = function (args, options, logger) {
-    execSh(askPath + " init", {});
+    if (options.noBrowser) {
+        execSh(askPath + " init --no-browser", {});
+    }
+    else {
+        execSh(askPath + " init", {});
+    }
 };
 exports.downloadConfig = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
     var url, fileName, answer, request;

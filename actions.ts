@@ -18,7 +18,11 @@ import {getIntents, getSlots} from './InteractionModel';
 const askPath = `${__dirname}/../node_modules/.bin/ask`;
 
 export const loginOrSwitch = (args, options, logger) => {
-  execSh(`${askPath} init`, {});
+  if (options.noBrowser) {
+    execSh(`${askPath} init --no-browser`, {});
+  } else {
+    execSh(`${askPath} init`, {});
+  }
 };
 
 export const downloadConfig = async (args, options, logger) => {
