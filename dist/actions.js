@@ -142,7 +142,7 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
 }); };
 exports.updateOrDeploySkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
     var _this = this;
-    var jsonOptions, getInput, answer, uri, changeApi, existingSkillConfig, tasks;
+    var jsonOptions, getInput, answer, uri, invocationName, changeApi, invocationOpts, invocationAnswer, existingSkillConfig, tasks;
     return __generator(this, function (_a) {
         jsonOptions = {
             spaces: 2
@@ -150,10 +150,19 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
         getInput = true;
         answer = '';
         uri = '';
+        invocationName = args.skill;
         changeApi = false;
+        if (args.skill === 'kanzi') {
+            invocationOpts = ['Kanzi', 'Kodi'];
+            invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
+            if (invocationAnswer === -1) {
+                return [2 /*return*/];
+            }
+            invocationName = invocationOpts[invocationAnswer].toLowerCase();
+        }
         if (fs.existsSync(args.skill) && fs.existsSync(args.skill + "/skill.json")) {
             existingSkillConfig = fse.readJsonSync(args.skill + "/skill.json");
-            if (_.hasIn(existingSkillConfig, 'skillManifest.apis.custom.endpoint.uri') || _.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
+            if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
                 getInput = false;
                 changeApi = false;
             }
@@ -228,8 +237,8 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                             case 1:
                                 _a.trys.push([1, 4, , 5]);
                                 url = ctx.dir === 'kanzi' ?
-                                    'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest' :
-                                    'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest';
+                                    'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+                                    'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
                                 return [4 /*yield*/, axios_1["default"].request({
                                         url: url
                                     })];
@@ -295,8 +304,8 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                     var skillJson = args.skill === 'kanzi' ? 'kanzi-skill.json' : 'koko-skill.json';
                     var skillConfig = fse.readJsonSync(__dirname + "/../" + skillJson);
                     if (changeApi) {
-                        delete skillConfig.skillManifest.apis;
-                        skillConfig.skillManifest.apis = {
+                        delete skillConfig.manifest.apis;
+                        skillConfig.manifest.apis = {
                             custom: {
                                 endpoint: {
                                     uri: uri
@@ -304,7 +313,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                             }
                         };
                         if (uri.substring(0, 8) === 'https://') {
-                            skillConfig.skillManifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
+                            skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
                         }
                     }
                     fse.removeSync(ctx.dir + "/skill.json");
@@ -322,7 +331,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 _a = {};
                                 _b = {};
                                 _c = {
-                                    invocationName: ctx.dir
+                                    invocationName: invocationName
                                 };
                                 return [4 /*yield*/, InteractionModel_1.getSlots(ctx.dir, ctx.config)];
                             case 1:
@@ -338,9 +347,15 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en');
                                 fse.removeSync(ctx.dir + "/models/en-US.json");
                                 fse.removeSync(ctx.dir + "/models/en-GB.json");
+                                fse.removeSync(ctx.dir + "/models/en-CA.json");
+                                fse.removeSync(ctx.dir + "/models/en-IN.json");
+                                fse.removeSync(ctx.dir + "/models/en-AU.json");
                                 fse.removeSync(ctx.dir + "/models/de-DE.json");
                                 fse.writeJsonSync(ctx.dir + "/models/en-US.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-GB.json", englishObj, jsonOptions);
+                                fse.writeJsonSync(ctx.dir + "/models/en-CA.json", englishObj, jsonOptions);
+                                fse.writeJsonSync(ctx.dir + "/models/en-IN.json", englishObj, jsonOptions);
+                                fse.writeJsonSync(ctx.dir + "/models/en-AU.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/de-DE.json", germanObj, jsonOptions);
                                 return [2 /*return*/];
                         }
@@ -433,8 +448,8 @@ exports.generateZip = function (args, options, logger) {
                         case 1:
                             _a.trys.push([1, 4, , 5]);
                             url = ctx.dir === 'kanzi' ?
-                                'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest' :
-                                'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest';
+                                'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+                                'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
                             return [4 /*yield*/, axios_1["default"].request({
                                     url: url
                                 })];

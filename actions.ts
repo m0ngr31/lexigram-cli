@@ -102,12 +102,24 @@ export const updateOrDeploySkill = async (args, options, logger) => {
   let getInput = true;
   let answer = '';
   let uri = '';
+  let invocationName = args.skill;
   let changeApi = false;
+
+  if (args.skill === 'kanzi') {
+    const invocationOpts = ['Kanzi', 'Kodi'];
+    let invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
+
+    if (invocationAnswer === -1) {
+      return;
+    }
+
+    invocationName = invocationOpts[invocationAnswer].toLowerCase();
+  }
 
   if (fs.existsSync(args.skill) && fs.existsSync(`${args.skill}/skill.json`)) {
     const existingSkillConfig = fse.readJsonSync(`${args.skill}/skill.json`);
 
-    if (_.hasIn(existingSkillConfig, 'skillManifest.apis.custom.endpoint.uri') || _.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
+    if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
       getInput = false;
       changeApi = false;
     }
@@ -186,8 +198,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
         try {
           const url = ctx.dir === 'kanzi' ?
-            'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest' :
-            'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest';
+            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
 
           const request = await axios.request({
             url
@@ -242,8 +254,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         const skillConfig = fse.readJsonSync(`${__dirname}/../${skillJson}`);
 
         if (changeApi) {
-          delete skillConfig.skillManifest.apis;
-          skillConfig.skillManifest.apis = {
+          delete skillConfig.manifest.apis;
+          skillConfig.manifest.apis = {
             custom: {
               endpoint: {
                 uri
@@ -252,7 +264,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
           };
 
           if (uri.substring(0, 8) === 'https://') {
-            skillConfig.skillManifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
+            skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
           }
         }
 
@@ -268,7 +280,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         const origObj :any = {
           interactionModel: {
             languageModel: {
-              invocationName: ctx.dir,
+              invocationName,
               types: await getSlots(ctx.dir, ctx.config),
               intents: []
             }
@@ -285,10 +297,16 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
         fse.removeSync(`${ctx.dir}/models/en-US.json`);
         fse.removeSync(`${ctx.dir}/models/en-GB.json`);
+        fse.removeSync(`${ctx.dir}/models/en-CA.json`);
+        fse.removeSync(`${ctx.dir}/models/en-IN.json`);
+        fse.removeSync(`${ctx.dir}/models/en-AU.json`);
         fse.removeSync(`${ctx.dir}/models/de-DE.json`);
 
         fse.writeJsonSync(`${ctx.dir}/models/en-US.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/en-GB.json`, englishObj, jsonOptions);
+        fse.writeJsonSync(`${ctx.dir}/models/en-CA.json`, englishObj, jsonOptions);
+        fse.writeJsonSync(`${ctx.dir}/models/en-IN.json`, englishObj, jsonOptions);
+        fse.writeJsonSync(`${ctx.dir}/models/en-AU.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/de-DE.json`, germanObj, jsonOptions);
       }
     },
@@ -369,8 +387,8 @@ export const generateZip = (args, options, logger) => {
 
         try {
           const url = ctx.dir === 'kanzi' ?
-            'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest' :
-            'https://api.github.com/repos/m0ngr31/kodi-alexa/releases/latest';
+            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
 
           const request = await axios.request({
             url

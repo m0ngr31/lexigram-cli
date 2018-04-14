@@ -1,29 +1,8 @@
 {
-  "skillManifest": {
+  "manifest": {
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "summary": "Control your Kodi device completely by voice!",
-          "examplePhrases": [
-            "Alexa, ask Kanzi what is playing",
-            "Alexa, tell Kanzi to play a random episode of Hogan's Heroes",
-            "Alexa, tell Kanzi listen to rock playlist"
-          ],
-          "keywords": [
-            "kodi",
-            "media",
-            "center",
-            "tv",
-            "control",
-            "tv",
-            "remote"
-          ],
-          "name": "Kanzi",
-          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
-          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
-          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
-        },
-        "de-DE": {
           "summary": "Control your Kodi device completely by voice!",
           "examplePhrases": [
             "Alexa, ask Kanzi what is playing",
@@ -64,6 +43,90 @@
           "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
           "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
           "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
+        },
+        "en-CA": {
+          "summary": "Control your Kodi device completely by voice!",
+          "examplePhrases": [
+            "Alexa, ask Kanzi what is playing",
+            "Alexa, tell Kanzi to play a random episode of Hogan's Heroes",
+            "Alexa, tell Kanzi listen to rock playlist"
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "tv",
+            "control",
+            "tv",
+            "remote"
+          ],
+          "name": "Kanzi",
+          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
+          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
+        },
+        "en-IN": {
+          "summary": "Control your Kodi device completely by voice!",
+          "examplePhrases": [
+            "Alexa, ask Kanzi what is playing",
+            "Alexa, tell Kanzi to play an episode of Hogan's Heroes",
+            "Alexa, tell Kanzi listen to rock playlist"
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "tv",
+            "control",
+            "tv",
+            "remote"
+          ],
+          "name": "Kanzi",
+          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
+          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
+        },
+        "en-AU": {
+          "summary": "Control your Kodi device completely by voice!",
+          "examplePhrases": [
+            "Alexa, ask Kanzi what is playing",
+            "Alexa, tell Kanzi to play a random episode of Hogan's Heroes",
+            "Alexa, tell Kanzi listen to rock playlist"
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "tv",
+            "control",
+            "tv",
+            "remote"
+          ],
+          "name": "Kanzi",
+          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
+          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
+        },
+        "de-DE": {
+          "summary": "Control your Kodi device completely by voice!",
+          "examplePhrases": [
+            "Alexa, ask Kanzi what is playing",
+            "Alexa, tell Kanzi to play a random episode of Hogan's Heroes",
+            "Alexa, tell Kanzi listen to rock playlist"
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "tv",
+            "control",
+            "tv",
+            "remote"
+          ],
+          "name": "Kanzi",
+          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
+          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://app.lexigr.am/getting-started and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
         }
       },
       "isAvailableWorldwide": true,
@@ -77,16 +140,6 @@
     "manifestVersion": "1.0",
     "privacyAndCompliance": {
       "allowsPurchases": false,
-      "locales": {
-        "en-US": {
-          "termsOfUseUrl": "https://app.lexigr.am/privacy-policy",
-          "privacyPolicyUrl": "https://app.lexigr.am/privacy-policy"
-        },
-        "en-GB": {
-          "termsOfUseUrl": "https://app.lexigr.am/privacy-policy",
-          "privacyPolicyUrl": "https://app.lexigr.am/privacy-policy"
-        }
-      },
       "isExportCompliant": true,
       "containsAds": false,
       "isChildDirected": false,
