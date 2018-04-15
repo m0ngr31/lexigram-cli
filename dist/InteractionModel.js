@@ -81,7 +81,6 @@ exports.getIntents = function (skill, lang) {
             intentObj.samples.push(sample);
         }
     });
-    _.remove(intents, function (intent) { return !intent.samples.length; });
     return intents;
 };
 exports.getSlots = function (skill, config) { return __awaiter(_this, void 0, void 0, function () {

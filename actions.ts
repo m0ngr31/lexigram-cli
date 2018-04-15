@@ -117,7 +117,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
     if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
       getInput = false;
-      changeApi = false;
+      changeApi = true;
+      uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
     }
   }
 

@@ -161,7 +161,8 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             existingSkillConfig = fse.readJsonSync(args.skill + "/skill.json");
             if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
                 getInput = false;
-                changeApi = false;
+                changeApi = true;
+                uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
             }
         }
         while (getInput) {

@@ -45,8 +45,6 @@ export const getIntents = (skill, lang) => {
     }
   });
 
-  _.remove(intents, intent => !intent.samples.length);
-
   return intents;
 };
 
