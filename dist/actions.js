@@ -96,9 +96,6 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
                         switch (_a.label) {
                             case 0:
                                 doInit = false;
-                                if (dir !== 'kanzi') {
-                                    throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-                                }
                                 if (!fs.existsSync(dir)) return [3 /*break*/, 6];
                                 answer = readlineSync.keyInYNStrict('Skill directory exists. Would you like to overwrite?');
                                 if (!answer) return [3 /*break*/, 5];
@@ -167,7 +164,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                 changeApi = false;
             }
         }
-        while (getInput && args.skill === 'kanzi') {
+        while (getInput) {
             answer = readlineSync.question("What's the URL for your skill server? (ex. https://... or arn:...). Press enter to skip. ");
             if (answer.length && (answer.substring(0, 8) === 'https://' || answer.substring(0, 4) === 'arn:')) {
                 getInput = false;
@@ -207,9 +204,6 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                 title: 'Check skill directory',
                 task: function (ctx) {
                     ctx.dir = args.skill;
-                    if (ctx.dir === 'koko') {
-                        throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-                    }
                     if (!fs.existsSync(ctx.dir)) {
                         throw new Error("Skill directory not found. Please run 'lexigram init-skill " + ctx.dir + "' first.");
                     }
@@ -230,15 +224,12 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                         switch (_a.label) {
                             case 0:
                                 fse.removeSync(ctx.dir + "-github.zip");
-                                if (ctx.dir !== 'kanzi') {
-                                    throw new Error('Koko isn\'t quite ready yet. Please check back later.');
-                                }
                                 _a.label = 1;
                             case 1:
                                 _a.trys.push([1, 4, , 5]);
                                 url = ctx.dir === 'kanzi' ?
                                     'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-                                    'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
+                                    'https://api.github.com/repos/m0ngr31/koko/releases/latest';
                                 return [4 /*yield*/, axios_1["default"].request({
                                         url: url
                                     })];
@@ -312,6 +303,13 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 }
                             }
                         };
+                        if (args.skill === 'koko') {
+                            skillConfig.manifest.apis.custom.interfaces = [
+                                {
+                                    "type": "AUDIO_PLAYER"
+                                }
+                            ];
+                        }
                         if (uri.substring(0, 8) === 'https://') {
                             skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
                         }
@@ -418,9 +416,6 @@ exports.generateZip = function (args, options, logger) {
             title: 'Check skill directory',
             task: function (ctx) {
                 ctx.dir = args.skill;
-                if (ctx.dir === 'koko') {
-                    throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-                }
                 if (!fs.existsSync(ctx.dir)) {
                     throw new Error("Skill directory not found. Please run 'lexigram init-skill " + ctx.dir + "' first.");
                 }
@@ -441,15 +436,12 @@ exports.generateZip = function (args, options, logger) {
                     switch (_a.label) {
                         case 0:
                             fse.removeSync(ctx.dir + "-release.zip");
-                            if (ctx.dir !== 'kanzi') {
-                                throw new Error('Koko isn\'t quite ready yet. Please check back later.');
-                            }
                             _a.label = 1;
                         case 1:
                             _a.trys.push([1, 4, , 5]);
                             url = ctx.dir === 'kanzi' ?
                                 'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-                                'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
+                                'https://api.github.com/repos/m0ngr31/koko/releases/latest';
                             return [4 /*yield*/, axios_1["default"].request({
                                     url: url
                                 })];

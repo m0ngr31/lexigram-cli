@@ -54,10 +54,6 @@ export const initSkill = async (args, options, logger) => {
       task: async () => {
         let doInit = false;
 
-        if (dir !== 'kanzi') {
-          throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-        }
-
         if (fs.existsSync(dir)) {
           const answer = readlineSync.keyInYNStrict('Skill directory exists. Would you like to overwrite?');
 
@@ -125,7 +121,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     }
   }
 
-  while (getInput && args.skill === 'kanzi') {
+  while (getInput) {
     answer = readlineSync.question("What's the URL for your skill server? (ex. https://... or arn:...). Press enter to skip. ");
 
     if (answer.length && (answer.substring(0, 8) === 'https://' || answer.substring(0, 4) === 'arn:')) {
@@ -169,10 +165,6 @@ export const updateOrDeploySkill = async (args, options, logger) => {
       task: ctx => {
         ctx.dir = args.skill;
 
-        if (ctx.dir === 'koko') {
-          throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-        }
-
         if (!fs.existsSync(ctx.dir)) {
           throw new Error(`Skill directory not found. Please run 'lexigram init-skill ${ctx.dir}' first.`);
         }
@@ -192,14 +184,10 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
         let releaseUrl;
 
-        if (ctx.dir !== 'kanzi') {
-          throw new Error('Koko isn\'t quite ready yet. Please check back later.');
-        }
-
         try {
           const url = ctx.dir === 'kanzi' ?
             'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
+            'https://api.github.com/repos/m0ngr31/koko/releases/latest';
 
           const request = await axios.request({
             url
@@ -262,6 +250,14 @@ export const updateOrDeploySkill = async (args, options, logger) => {
               }
             }
           };
+
+          if (args.skill === 'koko') {
+            skillConfig.manifest.apis.custom.interfaces = [
+              {
+                "type": "AUDIO_PLAYER"
+              }
+            ]
+          }
 
           if (uri.substring(0, 8) === 'https://') {
             skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
@@ -358,10 +354,6 @@ export const generateZip = (args, options, logger) => {
       task: ctx => {
         ctx.dir = args.skill;
 
-        if (ctx.dir === 'koko') {
-          throw new Error('Koko is not ready to be deployed yet. Please check back later.');
-        }
-
         if (!fs.existsSync(ctx.dir)) {
           throw new Error(`Skill directory not found. Please run 'lexigram init-skill ${ctx.dir}' first.`);
         }
@@ -381,14 +373,10 @@ export const generateZip = (args, options, logger) => {
 
         let releaseUrl;
 
-        if (ctx.dir !== 'kanzi') {
-          throw new Error('Koko isn\'t quite ready yet. Please check back later.');
-        }
-
         try {
           const url = ctx.dir === 'kanzi' ?
             'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-            'https://api.github.com/repos/m0ngr31/kanzi/releases/latest';
+            'https://api.github.com/repos/m0ngr31/koko/releases/latest';
 
           const request = await axios.request({
             url

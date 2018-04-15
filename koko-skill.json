@@ -1,0 +1,143 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "en-GB": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "en-CA": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "en-IN": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "en-AU": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "de-DE": {
+          "summary": "Stream your music from Kodi to Alexa",
+          "examplePhrases": [
+            "Alexa, ask Koko to play Radiohead",
+            "Alexa, tell Koko to play alternative playlist",
+            "Alexa, tell Koko to play Limousine by Brand New "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "music",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "",
+      "category": "SMART_HOME",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "interfaces": [
+          {
+            "type": "AUDIO_PLAYER"
+          }
+        ]
+      }
+    },
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": false,
+      "usesPersonalInfo": true
+    }
+  }
+}
