@@ -50,16 +50,17 @@ var fse = require("fs-extra");
 var path = require("path");
 var process = require("process");
 var axios_1 = require("axios");
+var ErrorHandler_1 = require("./ErrorHandler");
 exports.getIntents = function (skill, lang) {
     var intents = [];
     var file;
     if (lang === 'en') {
-        file = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/SampleUtterances.en.txt");
+        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.en.txt");
     }
     else {
-        file = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/SampleUtterances.de.txt");
+        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.de.txt");
     }
-    var intentsFile = path.join(process.cwd(), skill + "/lambda/repo/speech_assets/IntentSchema.json");
+    var intentsFile = path.join(process.cwd(), skill + "/source/repo/speech_assets/IntentSchema.json");
     var parsedIntents = fse.readJsonSync(intentsFile);
     var rawUtterances = fs.readFileSync(file, 'utf8');
     var utterances = rawUtterances.split(/\n/i);
@@ -237,151 +238,119 @@ var getSlotData = function (config) { return __awaiter(_this, void 0, void 0, fu
                 return [4 /*yield*/, axios_1["default"].all(promisesArr)];
             case 2:
                 _a = _b.sent(), shows = _a[0], showgenres = _a[1], movies = _a[2], moviegenres = _a[3], musicvideos = _a[4], musicvideogenres = _a[5], musicians = _a[6], albums = _a[7], songs = _a[8], musicgenres = _a[9], musicplaylists = _a[10], videoplaylists = _a[11], addonsvideo = _a[12], addonsaudio = _a[13], addonsimage = _a[14], addonsexe = _a[15];
-                if (shows.data.result && shows.data.result.tvshows) {
+                if (_.hasIn(shows, 'data.result.tvshows')) {
                     _.forEach(shows.data.result.tvshows, function (tvshow) {
                         var str = sanitizeResult(tvshow.label);
-                        var str_stripped = sanitizeResult(tvshow.label);
                         tvShowsArr.push(str);
-                        tvShowsArr.push(str_stripped);
                     });
                 }
-                if (showgenres.data.result && showgenres.data.result.genres) {
+                if (_.hasIn(showgenres, 'data.result.genres')) {
                     _.forEach(showgenres.data.result.genres, function (genre) {
                         var str = sanitizeResult(genre.label);
-                        var str_stripped = sanitizeResult(genre.label);
                         tvGenresArr.push(str);
-                        tvGenresArr.push(str_stripped);
                     });
                 }
-                if (movies.data.result && movies.data.result.movies) {
+                if (_.hasIn(movies, 'data.result.movies')) {
                     _.forEach(movies.data.result.movies, function (movie) {
                         var str = sanitizeResult(movie.label);
-                        var str_stripped = sanitizeResult(movie.label);
                         moviesArr.push(str);
-                        moviesArr.push(str_stripped);
                     });
                 }
-                if (moviegenres.data.result && moviegenres.data.result.genres) {
+                if (_.hasIn(moviegenres, 'data.result.genres')) {
                     _.forEach(moviegenres.data.result.genres, function (genre) {
                         var str = sanitizeResult(genre.label);
-                        var str_stripped = sanitizeResult(genre.label);
                         movieGenresArr.push(str);
-                        movieGenresArr.push(str_stripped);
                     });
                 }
-                if (musicvideos.data.result && musicvideos.data.result.musicvideos) {
+                if (_.hasIn(musicvideos, 'data.result.musicvideos')) {
                     _.forEach(musicvideos.data.result.musicvideos, function (musicvideo) {
                         var str = sanitizeResult(musicvideo.label);
-                        var str_stripped = sanitizeResult(musicvideo.label);
                         musicvideosArr.push(str);
-                        musicvideosArr.push(str_stripped);
                     });
                 }
-                if (musicvideogenres.data.result && musicvideogenres.data.result.genres) {
+                if (_.hasIn(musicvideogenres, 'data.result.genres')) {
                     _.forEach(musicvideogenres.data.result.genres, function (genre) {
                         var str = sanitizeResult(genre.label);
-                        var str_stripped = sanitizeResult(genre.label);
                         musicvideoGenresArr.push(str);
-                        musicvideoGenresArr.push(str_stripped);
                     });
                 }
-                if (musicians.data.result && musicians.data.result.artists) {
+                if (_.hasIn(musicians, 'data.result.artists')) {
                     _.forEach(musicians.data.result.artists, function (artist) {
                         var str = sanitizeResult(artist.label);
-                        var str_stripped = sanitizeResult(artist.label);
                         musiciansArr.push(str);
-                        musiciansArr.push(str_stripped);
                     });
                 }
-                if (albums.data.result && albums.data.result.albums) {
+                if (_.hasIn(albums, 'data.result.albums')) {
                     _.forEach(albums.data.result.albums, function (album) {
                         var str = sanitizeResult(album.label);
-                        var str_stripped = sanitizeResult(album.label);
                         albumsArr.push(str);
-                        albumsArr.push(str_stripped);
                     });
                 }
-                if (songs.data.result && songs.data.result.songs) {
+                if (_.hasIn(songs, 'data.result.songs')) {
                     _.forEach(songs.data.result.songs, function (song) {
                         var str = sanitizeResult(song.label);
-                        var str_stripped = sanitizeResult(song.label);
                         songsArr.push(str);
-                        songsArr.push(str_stripped);
                     });
                 }
-                if (musicgenres.data.result && musicgenres.data.result.genres) {
+                if (_.hasIn(musicgenres, 'data.result.genres')) {
                     _.forEach(musicgenres.data.result.genres, function (genre) {
                         var str = sanitizeResult(genre.label);
-                        var str_stripped = sanitizeResult(genre.label);
                         musicGenresArr.push(str);
-                        musicGenresArr.push(str_stripped);
                     });
                 }
-                if (musicplaylists.data.result && musicplaylists.data.result.files) {
+                if (_.hasIn(musicplaylists, 'data.result.files')) {
                     _.forEach(musicplaylists.data.result.files, function (playlist) {
                         var str = sanitizeResult(playlist.label);
-                        var str_stripped = sanitizeResult(playlist.label);
                         musicPlaylistsArr.push(str);
-                        musicPlaylistsArr.push(str_stripped);
                     });
                 }
-                if (videoplaylists.data.result && videoplaylists.data.result.files) {
+                if (_.hasIn(videoplaylists, 'data.result.files')) {
                     _.forEach(videoplaylists.data.result.files, function (playlist) {
                         var str = sanitizeResult(playlist.label);
-                        var str_stripped = sanitizeResult(playlist.label);
                         videoPlaylistsArr.push(str);
-                        videoPlaylistsArr.push(str_stripped);
                     });
                 }
-                if (addonsvideo.data.result && addonsvideo.data.result.addons) {
+                if (_.hasIn(addonsvideo, 'data.result.addons')) {
                     _.forEach(addonsvideo.data.result.addons, function (addon) {
                         var str = sanitizeResult(addon.name);
-                        var str_stripped = sanitizeResult(addon.name);
                         addonsArr.push(str);
-                        addonsArr.push(str_stripped);
                     });
                 }
-                if (addonsaudio.data.result && addonsaudio.data.result.addons) {
+                if (_.hasIn(addonsaudio, 'data.result.addons')) {
                     _.forEach(addonsaudio.data.result.addons, function (addon) {
                         var str = sanitizeResult(addon.name);
-                        var str_stripped = sanitizeResult(addon.name);
                         addonsArr.push(str);
-                        addonsArr.push(str_stripped);
                     });
                 }
-                if (addonsimage.data.result && addonsimage.data.result.addons) {
+                if (_.hasIn(addonsimage, 'data.result.addons')) {
                     _.forEach(addonsimage.data.result.addons, function (addon) {
                         var str = sanitizeResult(addon.name);
-                        var str_stripped = sanitizeResult(addon.name);
                         addonsArr.push(str);
-                        addonsArr.push(str_stripped);
                     });
                 }
-                if (addonsexe.data.result && addonsexe.data.result.addons) {
+                if (_.hasIn(addonsexe, 'data.result.addons')) {
                     _.forEach(addonsexe.data.result.addons, function (addon) {
                         var str = sanitizeResult(addon.name);
-                        var str_stripped = sanitizeResult(addon.name);
                         addonsArr.push(str);
-                        addonsArr.push(str_stripped);
                     });
                 }
-                tvShowsArr = _.take(_.shuffle(_.compact(_.uniq(tvShowsArr))), 100);
-                tvGenresArr = _.take(_.shuffle(_.compact(_.uniq(tvGenresArr))), 100);
-                moviesArr = _.take(_.shuffle(_.compact(_.uniq(moviesArr))), 100);
-                movieGenresArr = _.take(_.shuffle(_.compact(_.uniq(movieGenresArr))), 100);
-                musicvideosArr = _.take(_.shuffle(_.compact(_.uniq(musicvideosArr))), 100);
-                musicvideoGenresArr = _.take(_.shuffle(_.compact(_.uniq(musicvideoGenresArr))), 100);
-                musiciansArr = _.take(_.shuffle(_.compact(_.uniq(musiciansArr))), 100);
-                albumsArr = _.take(_.shuffle(_.compact(_.uniq(albumsArr))), 100);
-                songsArr = _.take(_.shuffle(_.compact(_.uniq(songsArr))), 100);
-                musicGenresArr = _.take(_.shuffle(_.compact(_.uniq(musicGenresArr))), 100);
-                musicPlaylistsArr = _.take(_.shuffle(_.compact(_.uniq(musicPlaylistsArr))), 100);
-                videoPlaylistsArr = _.take(_.shuffle(_.compact(_.uniq(videoPlaylistsArr))), 100);
-                addonsArr = _.take(_.shuffle(_.compact(_.uniq(addonsArr))), 100);
+                tvShowsArr = _.chain(tvShowsArr).compact().uniq().shuffle().take(100).orderBy().value();
+                tvGenresArr = _.chain(tvGenresArr).compact().uniq().shuffle().take(100).orderBy().value();
+                moviesArr = _.chain(moviesArr).compact().uniq().shuffle().take(100).orderBy().value();
+                movieGenresArr = _.chain(movieGenresArr).compact().uniq().shuffle().take(100).orderBy().value();
+                musicvideosArr = _.chain(musicvideosArr).compact().uniq().shuffle().take(100).orderBy().value();
+                musicvideoGenresArr = _.chain(musicvideoGenresArr).compact().uniq().shuffle().take(100).orderBy().value();
+                musiciansArr = _.chain(musiciansArr).compact().uniq().shuffle().take(100).orderBy().value();
+                albumsArr = _.chain(albumsArr).compact().uniq().shuffle().take(100).orderBy().value();
+                songsArr = _.chain(songsArr).compact().uniq().shuffle().take(100).orderBy().value();
+                musicGenresArr = _.chain(musicGenresArr).compact().uniq().shuffle().take(100).orderBy().value();
+                musicPlaylistsArr = _.chain(musicPlaylistsArr).compact().uniq().shuffle().take(100).orderBy().value();
+                videoPlaylistsArr = _.chain(videoPlaylistsArr).compact().uniq().shuffle().take(100).orderBy().value();
+                addonsArr = _.chain(addonsArr).compact().uniq().shuffle().take(100).orderBy().value();
                 return [2 /*return*/, { 'SHOWS': tvShowsArr, 'SHOWGENRES': tvGenresArr, 'MOVIES': moviesArr, 'MOVIEGENRES': movieGenresArr, 'MUSICVIDEOS': musicvideosArr, 'MUSICVIDEOGENRES': musicvideoGenresArr, 'MUSICARTISTS': musiciansArr, 'MUSICALBUMS': albumsArr, 'MUSICSONGS': songsArr, 'MUSICGENRES': musicGenresArr, 'MUSICPLAYLISTS': musicPlaylistsArr, 'VIDEOPLAYLISTS': videoPlaylistsArr, 'ADDONS': addonsArr }];
             case 3:
                 e_1 = _b.sent();
-                console.log(e_1);
+                ErrorHandler_1.ErrorLogger(e_1);
                 throw new Error('Kodi server configuration settings are wrong. Please double-check kodi.config to make sure it is setup properly.');
             case 4: return [2 /*return*/];
         }
@@ -391,7 +360,8 @@ var sanitizeResult = function (str) {
     // Remove invalid characters, per Amazon:
     // Slot type values can contain alphanumeric characters, spaces, commas,
     // apostrophes, periods, hyphens, ampersands and the @ symbol only.
-    str = str.replace(/[`~!#$%^*()_=+\[\]{}\\|;:"<>/?]/g, ' ');
+    str = str.replace(/[^a-zA-Z0-9\ \,\'\.\-\@\&]/g, ' ');
+    str = str.replace(/[ ]{2,}/g, ' '); // Remove double spaces
     // Slot items cannot exceed 140 chars, per Amazon
     if (str.length > 140) {
         str = str.substring(0, 141);

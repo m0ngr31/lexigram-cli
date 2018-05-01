@@ -76,6 +76,7 @@ typings/
 koko/
 kanzi/
 
+errorlog.txt
 test.ts
 test.js
 *.zip

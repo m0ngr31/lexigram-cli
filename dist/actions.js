@@ -49,6 +49,7 @@ var archiver = require("archiver-promise");
 var axios_1 = require("axios");
 var ParseIni_1 = require("./ParseIni");
 var InteractionModel_1 = require("./InteractionModel");
+var ErrorHandler_1 = require("./ErrorHandler");
 var askPath = __dirname + "/../node_modules/.bin/ask";
 exports.loginOrSwitch = function (args, options, logger) {
     if (options.noBrowser) {
@@ -91,7 +92,7 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
             {
                 title: "Initialize " + dir + " skill",
                 task: function () { return __awaiter(_this, void 0, void 0, function () {
-                    var doInit, answer, skillId, skillConfig, e_1;
+                    var doInit, answer, skillId, skillConfig, e_1, e_2;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -106,7 +107,7 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
                                 _a.label = 1;
                             case 1:
                                 _a.trys.push([1, 3, , 4]);
-                                return [4 /*yield*/, execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir })];
+                                return [4 /*yield*/, execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir, timeout: 60000 })];
                             case 2:
                                 _a.sent();
                                 return [3 /*break*/, 4];
@@ -122,12 +123,19 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
                                 doInit = true;
                                 _a.label = 7;
                             case 7:
-                                if (doInit) {
-                                    return [2 /*return*/, execa(askPath, ['new', '-n', dir, '--lambda-name', dir])["catch"](function () {
-                                            throw new Error('Could not create skill. Please try again.');
-                                        })];
-                                }
-                                return [2 /*return*/];
+                                if (!doInit) return [3 /*break*/, 11];
+                                _a.label = 8;
+                            case 8:
+                                _a.trys.push([8, 10, , 11]);
+                                return [4 /*yield*/, execa(askPath, ['new', '-n', dir])];
+                            case 9:
+                                _a.sent();
+                                return [3 /*break*/, 11];
+                            case 10:
+                                e_2 = _a.sent();
+                                ErrorHandler_1.ErrorLogger(e_2);
+                                throw new Error('Could not create skill. Please try again.');
+                            case 11: return [2 /*return*/];
                         }
                     });
                 }); }
@@ -213,14 +221,14 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Remove old repo code',
                 task: function (ctx) {
-                    fse.removeSync(ctx.dir + "/lambda/repo");
-                    fse.ensureDir(ctx.dir + "/lambda/repo");
+                    fse.removeSync(ctx.dir + "/source/repo");
+                    fse.ensureDir(ctx.dir + "/source/repo");
                 }
             },
             {
                 title: 'Download latest source code',
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                    var releaseUrl, url, request, releaseRequest, e_2;
+                    var releaseUrl, url, request, releaseRequest, e_3;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -246,8 +254,9 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 fs.writeFileSync(ctx.dir + "-github.zip", releaseRequest.data);
                                 return [3 /*break*/, 5];
                             case 4:
-                                e_2 = _a.sent();
-                                throw new Error("Could not download latest release. Please try again.");
+                                e_3 = _a.sent();
+                                ErrorHandler_1.ErrorLogger('Could not download latest release.');
+                                throw new Error('Could not download latest release. Please try again.');
                             case 5: return [2 /*return*/];
                         }
                     });
@@ -256,17 +265,18 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Extract source code',
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                    var e_3;
+                    var e_4;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 _a.trys.push([0, 2, , 3]);
-                                return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-github.zip"), unzip.Extract({ path: ctx.dir + "/lambda/repo" }))];
+                                return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-github.zip"), unzip.Extract({ path: ctx.dir + "/source/repo" }))];
                             case 1:
                                 _a.sent();
                                 return [3 /*break*/, 3];
                             case 2:
-                                e_3 = _a.sent();
+                                e_4 = _a.sent();
+                                ErrorHandler_1.ErrorLogger('Could not extract source code.');
                                 throw new Error('Could not extract source code. Please try again.');
                             case 3: return [2 /*return*/];
                         }
@@ -278,13 +288,13 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
                     var readDir, githubFolder, readGithubFolder;
                     return __generator(this, function (_a) {
-                        readDir = fs.readdirSync(ctx.dir + "/lambda/repo/");
+                        readDir = fs.readdirSync(ctx.dir + "/source/repo/");
                         githubFolder = readDir[0];
-                        readGithubFolder = fs.readdirSync(ctx.dir + "/lambda/repo/" + githubFolder + "/");
+                        readGithubFolder = fs.readdirSync(ctx.dir + "/source/repo/" + githubFolder + "/");
                         readGithubFolder.forEach(function (fileOrDir) {
-                            fse.moveSync(ctx.dir + "/lambda/repo/" + githubFolder + "/" + fileOrDir, ctx.dir + "/lambda/repo/" + fileOrDir);
+                            fse.moveSync(ctx.dir + "/source/repo/" + githubFolder + "/" + fileOrDir, ctx.dir + "/source/repo/" + fileOrDir);
                         });
-                        fse.removeSync(ctx.dir + "/lambda/repo/" + githubFolder);
+                        fse.removeSync(ctx.dir + "/source/repo/" + githubFolder);
                         fse.removeSync(ctx.dir + "-github.zip");
                         return [2 /*return*/];
                     });
@@ -364,22 +374,23 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Deploy skill',
                 task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var e_4;
+                    var e_5;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 _a.trys.push([0, 3, , 4]);
                                 task.output = 'Deploying skill information.';
-                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir })];
+                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir, timeout: 300000 })];
                             case 1:
                                 _a.sent();
                                 task.output = 'Deploying skill slot data and intents.';
-                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir })];
+                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir, timeout: 600000 })];
                             case 2:
                                 _a.sent();
                                 return [3 /*break*/, 4];
                             case 3:
-                                e_4 = _a.sent();
+                                e_5 = _a.sent();
+                                ErrorHandler_1.ErrorLogger(e_5);
                                 throw new Error('Error deploying. Please try again');
                             case 4: return [2 /*return*/];
                         }
@@ -425,14 +436,14 @@ exports.generateZip = function (args, options, logger) {
         {
             title: 'Remove old Lambda function code',
             task: function (ctx) {
-                fse.removeSync(ctx.dir + "/lambda/skill");
-                fse.ensureDir(ctx.dir + "/lambda/skill");
+                fse.removeSync(ctx.dir + "/source/skill");
+                fse.ensureDir(ctx.dir + "/source/skill");
             }
         },
         {
             title: 'Download latest source code',
             task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var releaseUrl, url, request, releaseRequest, e_5;
+                var releaseUrl, url, request, releaseRequest, e_6;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -458,8 +469,9 @@ exports.generateZip = function (args, options, logger) {
                             fs.writeFileSync(ctx.dir + "-release.zip", releaseRequest.data);
                             return [3 /*break*/, 5];
                         case 4:
-                            e_5 = _a.sent();
-                            throw new Error("Could not download latest release. Please try again.");
+                            e_6 = _a.sent();
+                            ErrorHandler_1.ErrorLogger('Could not download latest release.');
+                            throw new Error('Could not download latest release. Please try again.');
                         case 5: return [2 /*return*/];
                     }
                 });
@@ -468,18 +480,19 @@ exports.generateZip = function (args, options, logger) {
         {
             title: 'Extract source code',
             task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var e_6;
+                var e_7;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             _a.trys.push([0, 2, , 3]);
-                            return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-release.zip"), unzip.Extract({ path: ctx.dir + "/lambda/skill" }))];
+                            return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-release.zip"), unzip.Extract({ path: ctx.dir + "/source/skill" }))];
                         case 1:
                             _a.sent();
                             fse.removeSync(ctx.dir + "-release.zip");
                             return [3 /*break*/, 3];
                         case 2:
-                            e_6 = _a.sent();
+                            e_7 = _a.sent();
+                            ErrorHandler_1.ErrorLogger('Could not extract source code.');
                             throw new Error('Could not extract source code. Please try again.');
                         case 3: return [2 /*return*/];
                     }
@@ -490,9 +503,10 @@ exports.generateZip = function (args, options, logger) {
             title: 'Copy config file',
             task: function (ctx) {
                 try {
-                    fse.copySync(ctx.configFile, ctx.dir + "/lambda/skill/" + ctx.configFile);
+                    fse.copySync(ctx.configFile, ctx.dir + "/source/skill/" + ctx.configFile);
                 }
                 catch (e) {
+                    ErrorHandler_1.ErrorLogger('Could not copy config file.');
                     throw new Error('Could not copy config file. Please try again.');
                 }
             }
@@ -508,7 +522,7 @@ exports.generateZip = function (args, options, logger) {
                             archive = archiver(ctx.dir + "-lambda-upload.zip", {
                                 zlib: { level: 9 }
                             });
-                            archive.directory(ctx.dir + "/lambda/skill", false);
+                            archive.directory(ctx.dir + "/source/skill", false);
                             return [4 /*yield*/, archive.finalize()];
                         case 1:
                             _a.sent();

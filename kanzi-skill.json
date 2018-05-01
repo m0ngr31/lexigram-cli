@@ -137,7 +137,7 @@
       "isExportCompliant": true,
       "containsAds": false,
       "isChildDirected": false,
-      "usesPersonalInfo": true
+      "usesPersonalInfo": false
     }
   }
 }

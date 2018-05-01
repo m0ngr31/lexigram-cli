@@ -1,6 +1,6 @@
 {
   "name": "lexigram-cli",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "CLI for getting Kanzi and Koko skills for Kodi working as fast as possible",
   "main": "index.js",
   "scripts": {
@@ -25,6 +25,7 @@
     "fs-extra": "^5.0.0",
     "listr": "^0.13.0",
     "lodash": "^4.17.5",
+    "moment": "^2.22.1",
     "promisepipe": "^2.1.2",
     "readline-sync": "^1.4.9",
     "unzip-stream": "^0.3.0"

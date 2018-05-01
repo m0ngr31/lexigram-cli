@@ -14,6 +14,7 @@ import axios from 'axios';
 
 import ParseIni from './ParseIni';
 import {getIntents, getSlots} from './InteractionModel';
+import {ErrorLogger} from './ErrorHandler';
 
 const askPath = `${__dirname}/../node_modules/.bin/ask`;
 
@@ -66,7 +67,7 @@ export const initSkill = async (args, options, logger) => {
               skillId = skillConfig.deploy_settings.default.skill_id;
 
               try {
-                await execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir });
+                await execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir, timeout: 60000 });
               } catch (e) { }
             }
 
@@ -78,10 +79,12 @@ export const initSkill = async (args, options, logger) => {
         }
 
         if (doInit) {
-          return execa(askPath, ['new', '-n', dir, '--lambda-name', dir])
-            .catch(() => {
-              throw new Error('Could not create skill. Please try again.');
-            });
+          try {
+            await execa(askPath, ['new', '-n', dir]);
+          } catch (e) {
+            ErrorLogger(e);
+            throw new Error('Could not create skill. Please try again.');
+          }
         }
       }
     }
@@ -174,8 +177,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     {
       title: 'Remove old repo code',
       task: ctx => {
-        fse.removeSync(`${ctx.dir}/lambda/repo`);
-        fse.ensureDir(`${ctx.dir}/lambda/repo`);
+        fse.removeSync(`${ctx.dir}/source/repo`);
+        fse.ensureDir(`${ctx.dir}/source/repo`);
       }
     },
     {
@@ -203,7 +206,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
           fs.writeFileSync(`${ctx.dir}-github.zip`, releaseRequest.data);
         } catch (e) {
-          throw new Error(`Could not download latest release. Please try again.`);
+          ErrorLogger('Could not download latest release.');
+          throw new Error('Could not download latest release. Please try again.');
         }
       }
     },
@@ -213,9 +217,10 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         try {
           await promisePipe(
             fs.createReadStream(`${ctx.dir}-github.zip`),
-            unzip.Extract({ path: `${ctx.dir}/lambda/repo` })
+            unzip.Extract({ path: `${ctx.dir}/source/repo` })
           );
         } catch (e) {
+          ErrorLogger('Could not extract source code.');
           throw new Error('Could not extract source code. Please try again.');
         }
       }
@@ -223,16 +228,16 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     {
       title: 'Extract source code - Part 2',
       task: async ctx => {
-        const readDir = fs.readdirSync(`${ctx.dir}/lambda/repo/`);
+        const readDir = fs.readdirSync(`${ctx.dir}/source/repo/`);
         const githubFolder = readDir[0];
 
-        const readGithubFolder = fs.readdirSync(`${ctx.dir}/lambda/repo/${githubFolder}/`);
+        const readGithubFolder = fs.readdirSync(`${ctx.dir}/source/repo/${githubFolder}/`);
 
         readGithubFolder.forEach(fileOrDir => {
-          fse.moveSync(`${ctx.dir}/lambda/repo/${githubFolder}/${fileOrDir}`, `${ctx.dir}/lambda/repo/${fileOrDir}`);
+          fse.moveSync(`${ctx.dir}/source/repo/${githubFolder}/${fileOrDir}`, `${ctx.dir}/source/repo/${fileOrDir}`);
         });
 
-        fse.removeSync(`${ctx.dir}/lambda/repo/${githubFolder}`);
+        fse.removeSync(`${ctx.dir}/source/repo/${githubFolder}`);
         fse.removeSync(`${ctx.dir}-github.zip`);
       }
     },
@@ -312,10 +317,11 @@ export const updateOrDeploySkill = async (args, options, logger) => {
       task: async (ctx, task) => {
         try {
           task.output = 'Deploying skill information.';
-          await execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir });
+          await execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir, timeout: 300000 });
           task.output = 'Deploying skill slot data and intents.';
-          await execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir });
+          await execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir, timeout: 600000 });
         } catch (e) {
+          ErrorLogger(e);
           throw new Error('Error deploying. Please try again');
         }
       }
@@ -363,8 +369,8 @@ export const generateZip = (args, options, logger) => {
     {
       title: 'Remove old Lambda function code',
       task: ctx => {
-        fse.removeSync(`${ctx.dir}/lambda/skill`);
-        fse.ensureDir(`${ctx.dir}/lambda/skill`);
+        fse.removeSync(`${ctx.dir}/source/skill`);
+        fse.ensureDir(`${ctx.dir}/source/skill`);
       }
     },
     {
@@ -392,7 +398,8 @@ export const generateZip = (args, options, logger) => {
 
           fs.writeFileSync(`${ctx.dir}-release.zip`, releaseRequest.data);
         } catch (e) {
-          throw new Error(`Could not download latest release. Please try again.`);
+          ErrorLogger('Could not download latest release.');
+          throw new Error('Could not download latest release. Please try again.');
         }
       }
     },
@@ -402,11 +409,12 @@ export const generateZip = (args, options, logger) => {
         try {
           await promisePipe(
             fs.createReadStream(`${ctx.dir}-release.zip`),
-            unzip.Extract({ path: `${ctx.dir}/lambda/skill` })
+            unzip.Extract({ path: `${ctx.dir}/source/skill` })
           );
 
           fse.removeSync(`${ctx.dir}-release.zip`);
         } catch (e) {
+          ErrorLogger('Could not extract source code.');
           throw new Error('Could not extract source code. Please try again.');
         }
       }
@@ -415,8 +423,9 @@ export const generateZip = (args, options, logger) => {
       title: 'Copy config file',
       task: ctx => {
         try {
-          fse.copySync(ctx.configFile, `${ctx.dir}/lambda/skill/${ctx.configFile}`);
+          fse.copySync(ctx.configFile, `${ctx.dir}/source/skill/${ctx.configFile}`);
         } catch (e) {
+          ErrorLogger('Could not copy config file.');
           throw new Error('Could not copy config file. Please try again.');
         }
       }
@@ -430,7 +439,7 @@ export const generateZip = (args, options, logger) => {
           zlib: { level: 9 }
         });
 
-        archive.directory(`${ctx.dir}/lambda/skill`, false);
+        archive.directory(`${ctx.dir}/source/skill`, false);
         await archive.finalize();
       }
     }
