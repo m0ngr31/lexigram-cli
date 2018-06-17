@@ -37,6 +37,7 @@ var ParseIni = /** @class */ (function () {
         return [cleanLine, response];
     };
     ParseIni.prototype.setOjb = function (obj) {
+        var _a;
         if (!this.ini && !(this.ini.length === 0))
             return;
         var objCheck = __assign({}, obj);
@@ -82,9 +83,9 @@ var ParseIni = /** @class */ (function () {
         var newLines = lines.join('\n');
         // Get new schema
         this.parse(newLines);
-        var _a;
     };
     ParseIni.prototype.set = function (header, field, value) {
+        var _a;
         if (!this.ini)
             return;
         var lines = this.ini.split(/\n/i);
@@ -116,7 +117,6 @@ var ParseIni = /** @class */ (function () {
         var newLines = lines.join('\n');
         // Get new schema
         this.parse(newLines);
-        var _a;
     };
     ParseIni.prototype.verifyData = function () {
         try {
@@ -157,6 +157,7 @@ var ParseIni = /** @class */ (function () {
         var schema = {};
         var lastHeader = 'unset';
         lines.forEach(function (line) {
+            var _a;
             var cleanLine = _this.cleanComments(line);
             if (cleanLine.length > 0) {
                 // Determine if it's a header or setting
@@ -170,7 +171,6 @@ var ParseIni = /** @class */ (function () {
                     schema[lastHeader][cleanLine] = response;
                 }
             }
-            var _a;
         });
         this.schema = schema;
         this.ini = ini;

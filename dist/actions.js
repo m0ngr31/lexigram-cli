@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -84,8 +84,8 @@ exports.downloadConfig = function (args, options, logger) { return __awaiter(_th
     });
 }); };
 exports.initSkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
-    var _this = this;
     var dir, tasks;
+    var _this = this;
     return __generator(this, function (_a) {
         dir = args.skill;
         tasks = new Listr([
@@ -146,8 +146,8 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
     });
 }); };
 exports.updateOrDeploySkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
-    var _this = this;
     var jsonOptions, getInput, answer, uri, invocationName, changeApi, invocationOpts, invocationAnswer, existingSkillConfig, tasks;
+    var _this = this;
     return __generator(this, function (_a) {
         jsonOptions = {
             spaces: 2
@@ -332,7 +332,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Update slot values',
                 task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var origObj, _a, _b, _c, englishObj, germanObj;
+                    var origObj, _a, _b, _c, englishObj, germanObj, frenchObj;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
@@ -352,20 +352,24 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 task.output = 'Creating intent model.';
                                 englishObj = _.cloneDeep(origObj);
                                 germanObj = _.cloneDeep(origObj);
+                                frenchObj = _.cloneDeep(origObj);
                                 germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de');
                                 englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en');
+                                frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr');
                                 fse.removeSync(ctx.dir + "/models/en-US.json");
                                 fse.removeSync(ctx.dir + "/models/en-GB.json");
                                 fse.removeSync(ctx.dir + "/models/en-CA.json");
                                 fse.removeSync(ctx.dir + "/models/en-IN.json");
                                 fse.removeSync(ctx.dir + "/models/en-AU.json");
                                 fse.removeSync(ctx.dir + "/models/de-DE.json");
+                                fse.removeSync(ctx.dir + "/models/fr-FR.json");
                                 fse.writeJsonSync(ctx.dir + "/models/en-US.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-GB.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-CA.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-IN.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-AU.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/de-DE.json", germanObj, jsonOptions);
+                                fse.writeJsonSync(ctx.dir + "/models/fr-FR.json", frenchObj, jsonOptions);
                                 return [2 /*return*/];
                         }
                     });

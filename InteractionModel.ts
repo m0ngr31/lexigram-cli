@@ -13,6 +13,8 @@ export const getIntents = (skill, lang) => {
 
   if (lang === 'en') {
     file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.en.txt`);
+  } else if (lang === 'fr') {
+    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.fr.txt`);
   } else {
     file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.de.txt`);
   }
