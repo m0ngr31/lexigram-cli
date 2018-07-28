@@ -1,6 +1,6 @@
 {
   "name": "lexigram-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "CLI for getting Kanzi and Koko skills for Kodi working as fast as possible",
   "main": "index.js",
   "scripts": {

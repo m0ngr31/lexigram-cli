@@ -121,6 +121,26 @@
           "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
           "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
           "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
+        },
+        "fr-FR": {
+          "summary": "Control your Kodi device completely by voice!",
+          "examplePhrases": [
+            "Alexa, ask Kanzi what is playing",
+            "Alexa, tell Kanzi to play a random episode of Hogan's Heroes",
+            "Alexa, tell Kanzi listen to rock playlist"
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "tv",
+            "control",
+            "remote"
+          ],
+          "name": "Kanzi",
+          "smallIconUri": "https://i.imgur.com/ztNTtIi.png",
+          "description": "Kanzi makes it easy to control anything on your Kodi boxes. Want to play your music, watch a random horror movie, or play the next episode of that TV show you're binging?\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
+          "largeIconUri": "https://i.imgur.com/k0MOv2r.png"
         }
       },
       "isAvailableWorldwide": true,
