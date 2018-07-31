@@ -5,7 +5,7 @@ var caporal = require("caporal");
 var actions_1 = require("./actions");
 var program = caporal;
 program
-    .version('1.0.8')
+    .version('1.0.9')
     .name('Lexigram-CLI')
     .bin('lexigram')
     .command('login', 'Authenticate with Amazon.')

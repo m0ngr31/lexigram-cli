@@ -332,11 +332,12 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Update slot values',
                 task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var origObj, _a, _b, _c, englishObj, germanObj, frenchObj;
+                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
                                 task.output = 'Generating slot data from Kodi.';
+                                isKanzi = args.skill === 'kanzi';
                                 _a = {};
                                 _b = {};
                                 _c = {
@@ -355,7 +356,9 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 frenchObj = _.cloneDeep(origObj);
                                 germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de');
                                 englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en');
-                                frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr');
+                                if (isKanzi) {
+                                    frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr');
+                                }
                                 fse.removeSync(ctx.dir + "/models/en-US.json");
                                 fse.removeSync(ctx.dir + "/models/en-GB.json");
                                 fse.removeSync(ctx.dir + "/models/en-CA.json");
@@ -369,7 +372,9 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 fse.writeJsonSync(ctx.dir + "/models/en-IN.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-AU.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/de-DE.json", germanObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/fr-FR.json", frenchObj, jsonOptions);
+                                if (isKanzi) {
+                                    fse.writeJsonSync(ctx.dir + "/models/fr-FR.json", frenchObj, jsonOptions);
+                                }
                                 return [2 /*return*/];
                         }
                     });

@@ -279,6 +279,8 @@ export const updateOrDeploySkill = async (args, options, logger) => {
       task: async (ctx, task) => {
         task.output = 'Generating slot data from Kodi.';
 
+        const isKanzi = args.skill === 'kanzi';
+
         const origObj :any = {
           interactionModel: {
             languageModel: {
@@ -297,7 +299,10 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
         germanObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'de');
         englishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'en');
-        frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr');
+
+        if (isKanzi) {
+          frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr');
+        }
 
         fse.removeSync(`${ctx.dir}/models/en-US.json`);
         fse.removeSync(`${ctx.dir}/models/en-GB.json`);
@@ -313,7 +318,10 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         fse.writeJsonSync(`${ctx.dir}/models/en-IN.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/en-AU.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/de-DE.json`, germanObj, jsonOptions);
-        fse.writeJsonSync(`${ctx.dir}/models/fr-FR.json`, frenchObj, jsonOptions);
+
+        if (isKanzi) {
+          fse.writeJsonSync(`${ctx.dir}/models/fr-FR.json`, frenchObj, jsonOptions);
+        }
       }
     },
     {
