@@ -18,6 +18,10 @@ import {ErrorLogger} from './ErrorHandler';
 
 const askPath = `${__dirname}/../node_modules/.bin/ask`;
 
+const jsonOptions = {
+  spaces: 2
+};
+
 export const loginOrSwitch = (args, options, logger) => {
   if (options.noBrowser) {
     execSh(`${askPath} init --no-browser`, {});
@@ -81,6 +85,10 @@ export const initSkill = async (args, options, logger) => {
         if (doInit) {
           try {
             await execa(askPath, ['new', '-n', dir]);
+
+            const newSkillConfig = fse.readJsonSync(`${dir}/.ask/config`);
+            delete newSkillConfig.deploy_settings.default.merge;
+            fse.writeJsonSync(`${dir}/.ask/config`, newSkillConfig, jsonOptions);
           } catch (e) {
             ErrorLogger(e);
             throw new Error('Could not create skill. Please try again.');
@@ -94,10 +102,6 @@ export const initSkill = async (args, options, logger) => {
 };
 
 export const updateOrDeploySkill = async (args, options, logger) => {
-  const jsonOptions = {
-    spaces: 2
-  };
-
   let getInput = true;
   let answer = '';
   let uri = '';

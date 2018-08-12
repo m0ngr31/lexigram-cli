@@ -51,6 +51,9 @@ var ParseIni_1 = require("./ParseIni");
 var InteractionModel_1 = require("./InteractionModel");
 var ErrorHandler_1 = require("./ErrorHandler");
 var askPath = __dirname + "/../node_modules/.bin/ask";
+var jsonOptions = {
+    spaces: 2
+};
 exports.loginOrSwitch = function (args, options, logger) {
     if (options.noBrowser) {
         execSh(askPath + " init --no-browser", {});
@@ -92,7 +95,7 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
             {
                 title: "Initialize " + dir + " skill",
                 task: function () { return __awaiter(_this, void 0, void 0, function () {
-                    var doInit, answer, skillId, skillConfig, e_1, e_2;
+                    var doInit, answer, skillId, skillConfig, e_1, newSkillConfig, e_2;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -130,6 +133,9 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
                                 return [4 /*yield*/, execa(askPath, ['new', '-n', dir])];
                             case 9:
                                 _a.sent();
+                                newSkillConfig = fse.readJsonSync(dir + "/.ask/config");
+                                delete newSkillConfig.deploy_settings["default"].merge;
+                                fse.writeJsonSync(dir + "/.ask/config", newSkillConfig, jsonOptions);
                                 return [3 /*break*/, 11];
                             case 10:
                                 e_2 = _a.sent();
@@ -147,11 +153,8 @@ exports.initSkill = function (args, options, logger) { return __awaiter(_this, v
 }); };
 exports.updateOrDeploySkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
     var _this = this;
-    var jsonOptions, getInput, answer, uri, invocationName, changeApi, invocationOpts, invocationAnswer, existingSkillConfig, tasks;
+    var getInput, answer, uri, invocationName, changeApi, invocationOpts, invocationAnswer, existingSkillConfig, tasks;
     return __generator(this, function (_a) {
-        jsonOptions = {
-            spaces: 2
-        };
         getInput = true;
         answer = '';
         uri = '';
