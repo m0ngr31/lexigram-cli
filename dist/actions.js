@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -7,418 +6,131 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var _this = this;
-exports.__esModule = true;
-var execSh = require("exec-sh");
-var execa = require("execa");
-var fs = require("fs");
-var readlineSync = require("readline-sync");
-var fse = require("fs-extra");
-var Listr = require("listr");
-var unzip = require("unzip-stream");
-var promisePipe = require("promisepipe");
-var _ = require("lodash");
-var archiver = require("archiver-promise");
-var axios_1 = require("axios");
-var ParseIni_1 = require("./ParseIni");
-var InteractionModel_1 = require("./InteractionModel");
-var ErrorHandler_1 = require("./ErrorHandler");
-var askPath = __dirname + "/../node_modules/.bin/ask";
-var jsonOptions = {
+import * as execSh from 'exec-sh';
+import * as execa from 'execa';
+import * as fs from 'fs';
+import * as readlineSync from 'readline-sync';
+import * as fse from 'fs-extra';
+import * as Listr from 'listr';
+import * as unzip from 'unzip-stream';
+import * as promisePipe from 'promisepipe';
+import * as _ from 'lodash';
+import * as archiver from 'archiver-promise';
+import axios from 'axios';
+import ParseIni from './ParseIni';
+import { getIntents, getSlots } from './InteractionModel';
+import { ErrorLogger } from './ErrorHandler';
+const askPath = `${__dirname}/../node_modules/.bin/ask`;
+const jsonOptions = {
     spaces: 2
 };
-exports.loginOrSwitch = function (args, options, logger) {
+export const loginOrSwitch = (args, options, logger) => {
     if (options.noBrowser) {
-        execSh(askPath + " init --no-browser", {});
+        execSh(`${askPath} init --no-browser`, {});
     }
     else {
-        execSh(askPath + " init", {});
+        execSh(`${askPath} init`, {});
     }
 };
-exports.downloadConfig = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
-    var url, fileName, answer, request;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                url = 'https://rawgit.com/m0ngr31/kodi-voice/master/kodi_voice/kodi.config.example';
-                fileName = 'kodi.config';
-                if (fs.existsSync(fileName)) {
-                    answer = readlineSync.keyInYNStrict('Config file already exists. Would you like to overwrite?');
-                    if (!answer) {
-                        return [2 /*return*/];
-                    }
-                }
-                return [4 /*yield*/, axios_1["default"].request({
-                        url: url,
-                        responseType: 'arraybuffer'
-                    })];
-            case 1:
-                request = _a.sent();
-                fs.writeFileSync(fileName, request.data);
-                return [2 /*return*/];
+export const downloadConfig = (args, options, logger) => __awaiter(this, void 0, void 0, function* () {
+    const url = 'https://rawgit.com/m0ngr31/kodi-voice/master/kodi_voice/kodi.config.example';
+    const fileName = 'kodi.config';
+    if (fs.existsSync(fileName)) {
+        const answer = readlineSync.keyInYNStrict('Config file already exists. Would you like to overwrite?');
+        if (!answer) {
+            return;
         }
+    }
+    const request = yield axios.request({
+        url,
+        responseType: 'arraybuffer'
     });
-}); };
-exports.initSkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
-    var _this = this;
-    var dir, tasks;
-    return __generator(this, function (_a) {
-        dir = args.skill;
-        tasks = new Listr([
-            {
-                title: "Initialize " + dir + " skill",
-                task: function () { return __awaiter(_this, void 0, void 0, function () {
-                    var doInit, answer, skillId, skillConfig, e_1, newSkillConfig, e_2;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                doInit = false;
-                                if (!fs.existsSync(dir)) return [3 /*break*/, 6];
-                                answer = readlineSync.keyInYNStrict('Skill directory exists. Would you like to overwrite?');
-                                if (!answer) return [3 /*break*/, 5];
-                                skillId = '';
-                                skillConfig = fse.readJsonSync(dir + "/.ask/config");
-                                if (!_.hasIn(skillConfig, 'deploy_settings.default.skill_id')) return [3 /*break*/, 4];
-                                skillId = skillConfig.deploy_settings["default"].skill_id;
-                                _a.label = 1;
-                            case 1:
-                                _a.trys.push([1, 3, , 4]);
-                                return [4 /*yield*/, execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir, timeout: 60000 })];
-                            case 2:
-                                _a.sent();
-                                return [3 /*break*/, 4];
-                            case 3:
-                                e_1 = _a.sent();
-                                return [3 /*break*/, 4];
-                            case 4:
-                                fse.removeSync(dir);
-                                doInit = true;
-                                _a.label = 5;
-                            case 5: return [3 /*break*/, 7];
-                            case 6:
-                                doInit = true;
-                                _a.label = 7;
-                            case 7:
-                                if (!doInit) return [3 /*break*/, 11];
-                                _a.label = 8;
-                            case 8:
-                                _a.trys.push([8, 10, , 11]);
-                                return [4 /*yield*/, execa(askPath, ['new', '-n', dir])];
-                            case 9:
-                                _a.sent();
-                                newSkillConfig = fse.readJsonSync(dir + "/.ask/config");
-                                delete newSkillConfig.deploy_settings["default"].merge;
-                                fse.writeJsonSync(dir + "/.ask/config", newSkillConfig, jsonOptions);
-                                return [3 /*break*/, 11];
-                            case 10:
-                                e_2 = _a.sent();
-                                ErrorHandler_1.ErrorLogger(e_2);
-                                throw new Error('Could not create skill. Please try again.');
-                            case 11: return [2 /*return*/];
-                        }
-                    });
-                }); }
-            }
-        ]);
-        tasks.run()["catch"](function (err) { });
-        return [2 /*return*/];
-    });
-}); };
-exports.updateOrDeploySkill = function (args, options, logger) { return __awaiter(_this, void 0, void 0, function () {
-    var _this = this;
-    var getInput, answer, uri, invocationName, changeApi, invocationOpts, invocationAnswer, existingSkillConfig, tasks;
-    return __generator(this, function (_a) {
-        getInput = true;
-        answer = '';
-        uri = '';
-        invocationName = args.skill;
-        changeApi = false;
-        if (args.skill === 'kanzi') {
-            invocationOpts = ['Kanzi', 'Kodi'];
-            invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
-            if (invocationAnswer === -1) {
-                return [2 /*return*/];
-            }
-            invocationName = invocationOpts[invocationAnswer].toLowerCase();
-        }
-        if (fs.existsSync(args.skill) && fs.existsSync(args.skill + "/skill.json")) {
-            existingSkillConfig = fse.readJsonSync(args.skill + "/skill.json");
-            if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
-                getInput = false;
-                changeApi = true;
-                uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
-            }
-        }
-        while (getInput) {
-            answer = readlineSync.question("What's the URL for your skill server? (ex. https://... or arn:...). Press enter to skip. ");
-            if (answer.length && (answer.substring(0, 8) === 'https://' || answer.substring(0, 4) === 'arn:')) {
-                getInput = false;
-                uri = answer;
-                changeApi = true;
-            }
-            else if (!answer.length) {
-                getInput = false;
-                changeApi = false;
-            }
-            else {
-                logger.warn('Invalid URI. Please try again.');
-            }
-        }
-        tasks = new Listr([
-            {
-                title: 'Check config file',
-                task: function (ctx) {
-                    ctx.configFile = 'kodi.config';
-                    if (!fs.existsSync(ctx.configFile)) {
-                        throw new Error("Config file not found. Please run 'lexigram init-config' first.");
-                    }
-                }
-            },
-            {
-                title: 'Validate config file',
-                task: function (ctx) {
-                    ctx.config = new ParseIni_1["default"]();
-                    var file = fs.readFileSync(ctx.configFile, 'utf8');
-                    ctx.config.parse(file);
-                    if (!ctx.config.verifyData()) {
-                        throw new Error('Configuration file is not valid. Please update it with the correct information.');
-                    }
-                }
-            },
-            {
-                title: 'Check skill directory',
-                task: function (ctx) {
-                    ctx.dir = args.skill;
-                    if (!fs.existsSync(ctx.dir)) {
-                        throw new Error("Skill directory not found. Please run 'lexigram init-skill " + ctx.dir + "' first.");
-                    }
-                }
-            },
-            {
-                title: 'Remove old repo code',
-                task: function (ctx) {
-                    fse.removeSync(ctx.dir + "/source/repo");
-                    fse.ensureDir(ctx.dir + "/source/repo");
-                }
-            },
-            {
-                title: 'Download latest source code',
-                task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                    var releaseUrl, url, request, releaseRequest, e_3;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                fse.removeSync(ctx.dir + "-github.zip");
-                                _a.label = 1;
-                            case 1:
-                                _a.trys.push([1, 4, , 5]);
-                                url = ctx.dir === 'kanzi' ?
-                                    'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-                                    'https://api.github.com/repos/m0ngr31/koko/releases/latest';
-                                return [4 /*yield*/, axios_1["default"].request({
-                                        url: url
-                                    })];
-                            case 2:
-                                request = _a.sent();
-                                releaseUrl = request.data.zipball_url;
-                                return [4 /*yield*/, axios_1["default"].request({
-                                        url: releaseUrl,
-                                        responseType: 'arraybuffer'
-                                    })];
-                            case 3:
-                                releaseRequest = _a.sent();
-                                fs.writeFileSync(ctx.dir + "-github.zip", releaseRequest.data);
-                                return [3 /*break*/, 5];
-                            case 4:
-                                e_3 = _a.sent();
-                                ErrorHandler_1.ErrorLogger('Could not download latest release.');
-                                throw new Error('Could not download latest release. Please try again.');
-                            case 5: return [2 /*return*/];
-                        }
-                    });
-                }); }
-            },
-            {
-                title: 'Extract source code',
-                task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                    var e_4;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                _a.trys.push([0, 2, , 3]);
-                                return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-github.zip"), unzip.Extract({ path: ctx.dir + "/source/repo" }))];
-                            case 1:
-                                _a.sent();
-                                return [3 /*break*/, 3];
-                            case 2:
-                                e_4 = _a.sent();
-                                ErrorHandler_1.ErrorLogger('Could not extract source code.');
-                                throw new Error('Could not extract source code. Please try again.');
-                            case 3: return [2 /*return*/];
-                        }
-                    });
-                }); }
-            },
-            {
-                title: 'Extract source code - Part 2',
-                task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                    var readDir, githubFolder, readGithubFolder;
-                    return __generator(this, function (_a) {
-                        readDir = fs.readdirSync(ctx.dir + "/source/repo/");
-                        githubFolder = readDir[0];
-                        readGithubFolder = fs.readdirSync(ctx.dir + "/source/repo/" + githubFolder + "/");
-                        readGithubFolder.forEach(function (fileOrDir) {
-                            fse.moveSync(ctx.dir + "/source/repo/" + githubFolder + "/" + fileOrDir, ctx.dir + "/source/repo/" + fileOrDir);
-                        });
-                        fse.removeSync(ctx.dir + "/source/repo/" + githubFolder);
-                        fse.removeSync(ctx.dir + "-github.zip");
-                        return [2 /*return*/];
-                    });
-                }); }
-            },
-            {
-                title: 'Update skill data',
-                task: function (ctx) {
-                    var skillJson = args.skill === 'kanzi' ? 'kanzi-skill.json' : 'koko-skill.json';
-                    var skillConfig = fse.readJsonSync(__dirname + "/../" + skillJson);
-                    if (changeApi) {
-                        delete skillConfig.manifest.apis;
-                        skillConfig.manifest.apis = {
-                            custom: {
-                                endpoint: {
-                                    uri: uri
-                                }
+    fs.writeFileSync(fileName, request.data);
+});
+export const initSkill = (args, options, logger) => __awaiter(this, void 0, void 0, function* () {
+    const dir = args.skill;
+    const tasks = new Listr([
+        {
+            title: `Initialize ${dir} skill`,
+            task: () => __awaiter(this, void 0, void 0, function* () {
+                let doInit = false;
+                if (fs.existsSync(dir)) {
+                    const answer = readlineSync.keyInYNStrict('Skill directory exists. Would you like to overwrite?');
+                    if (answer) {
+                        let skillId = '';
+                        const skillConfig = fse.readJsonSync(`${dir}/.ask/config`);
+                        if (_.hasIn(skillConfig, 'deploy_settings.default.skill_id')) {
+                            skillId = skillConfig.deploy_settings.default.skill_id;
+                            try {
+                                yield execa(askPath, ['api', 'delete-skill', '--skill-id', skillId], { cwd: dir, timeout: 60000 });
                             }
-                        };
-                        if (args.skill === 'koko') {
-                            skillConfig.manifest.apis.custom.interfaces = [
-                                {
-                                    "type": "AUDIO_PLAYER"
-                                }
-                            ];
+                            catch (e) { }
                         }
-                        if (uri.substring(0, 8) === 'https://') {
-                            skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
-                        }
+                        fse.removeSync(dir);
+                        doInit = true;
                     }
-                    fse.removeSync(ctx.dir + "/skill.json");
-                    fse.writeJsonSync(ctx.dir + "/skill.json", skillConfig, jsonOptions);
                 }
-            },
-            {
-                title: 'Update slot values',
-                task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj;
-                    return __generator(this, function (_d) {
-                        switch (_d.label) {
-                            case 0:
-                                task.output = 'Generating slot data from Kodi.';
-                                isKanzi = args.skill === 'kanzi';
-                                _a = {};
-                                _b = {};
-                                _c = {
-                                    invocationName: invocationName
-                                };
-                                return [4 /*yield*/, InteractionModel_1.getSlots(ctx.dir, ctx.config)];
-                            case 1:
-                                origObj = (_a.interactionModel = (_b.languageModel = (_c.types = _d.sent(),
-                                    _c.intents = [],
-                                    _c),
-                                    _b),
-                                    _a);
-                                task.output = 'Creating intent model.';
-                                englishObj = _.cloneDeep(origObj);
-                                germanObj = _.cloneDeep(origObj);
-                                frenchObj = _.cloneDeep(origObj);
-                                germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de');
-                                englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en');
-                                if (isKanzi) {
-                                    frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr');
-                                }
-                                fse.removeSync(ctx.dir + "/models/en-US.json");
-                                fse.removeSync(ctx.dir + "/models/en-GB.json");
-                                fse.removeSync(ctx.dir + "/models/en-CA.json");
-                                fse.removeSync(ctx.dir + "/models/en-IN.json");
-                                fse.removeSync(ctx.dir + "/models/en-AU.json");
-                                fse.removeSync(ctx.dir + "/models/de-DE.json");
-                                fse.removeSync(ctx.dir + "/models/fr-FR.json");
-                                fse.writeJsonSync(ctx.dir + "/models/en-US.json", englishObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/en-GB.json", englishObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/en-CA.json", englishObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/en-IN.json", englishObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/en-AU.json", englishObj, jsonOptions);
-                                fse.writeJsonSync(ctx.dir + "/models/de-DE.json", germanObj, jsonOptions);
-                                if (isKanzi) {
-                                    fse.writeJsonSync(ctx.dir + "/models/fr-FR.json", frenchObj, jsonOptions);
-                                }
-                                return [2 /*return*/];
-                        }
-                    });
-                }); }
-            },
-            {
-                title: 'Deploy skill',
-                task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var e_5;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                _a.trys.push([0, 3, , 4]);
-                                task.output = 'Deploying skill information.';
-                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir, timeout: 300000 })];
-                            case 1:
-                                _a.sent();
-                                task.output = 'Deploying skill slot data and intents.';
-                                return [4 /*yield*/, execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir, timeout: 600000 })];
-                            case 2:
-                                _a.sent();
-                                return [3 /*break*/, 4];
-                            case 3:
-                                e_5 = _a.sent();
-                                ErrorHandler_1.ErrorLogger(e_5);
-                                throw new Error('Error deploying. Please try again');
-                            case 4: return [2 /*return*/];
-                        }
-                    });
-                }); }
-            }
-        ]);
-        tasks.run()["catch"](function (err) { });
-        return [2 /*return*/];
-    });
-}); };
-exports.generateZip = function (args, options, logger) {
-    var tasks = new Listr([
+                else {
+                    doInit = true;
+                }
+                if (doInit) {
+                    try {
+                        yield execa(askPath, ['new', '-n', dir]);
+                        const newSkillConfig = fse.readJsonSync(`${dir}/.ask/config`);
+                        delete newSkillConfig.deploy_settings.default.merge;
+                        fse.writeJsonSync(`${dir}/.ask/config`, newSkillConfig, jsonOptions);
+                    }
+                    catch (e) {
+                        ErrorLogger(e);
+                        throw new Error('Could not create skill. Please try again.');
+                    }
+                }
+            })
+        }
+    ]);
+    tasks.run().catch(err => { });
+});
+export const updateOrDeploySkill = (args, options, logger) => __awaiter(this, void 0, void 0, function* () {
+    let getInput = true;
+    let answer = '';
+    let uri = '';
+    let invocationName = args.skill;
+    let changeApi = false;
+    if (args.skill === 'kanzi') {
+        const invocationOpts = ['Kanzi', 'Kodi'];
+        let invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
+        if (invocationAnswer === -1) {
+            return;
+        }
+        invocationName = invocationOpts[invocationAnswer].toLowerCase();
+    }
+    if (fs.existsSync(args.skill) && fs.existsSync(`${args.skill}/skill.json`)) {
+        const existingSkillConfig = fse.readJsonSync(`${args.skill}/skill.json`);
+        if (_.hasIn(existingSkillConfig, 'manifest.apis.custom.endpoint.uri')) {
+            getInput = false;
+            changeApi = true;
+            uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
+        }
+    }
+    while (getInput) {
+        answer = readlineSync.question("What's the URL for your skill server? (ex. https://... or arn:...). Press enter to skip. ");
+        if (answer.length && (answer.substring(0, 8) === 'https://' || answer.substring(0, 4) === 'arn:')) {
+            getInput = false;
+            uri = answer;
+            changeApi = true;
+        }
+        else if (!answer.length) {
+            getInput = false;
+            changeApi = false;
+        }
+        else {
+            logger.warn('Invalid URI. Please try again.');
+        }
+    }
+    const tasks = new Listr([
         {
             title: 'Check config file',
-            task: function (ctx) {
+            task: ctx => {
                 ctx.configFile = 'kodi.config';
                 if (!fs.existsSync(ctx.configFile)) {
                     throw new Error("Config file not found. Please run 'lexigram init-config' first.");
@@ -427,9 +139,9 @@ exports.generateZip = function (args, options, logger) {
         },
         {
             title: 'Validate config file',
-            task: function (ctx) {
-                ctx.config = new ParseIni_1["default"]();
-                var file = fs.readFileSync(ctx.configFile, 'utf8');
+            task: ctx => {
+                ctx.config = new ParseIni();
+                const file = fs.readFileSync(ctx.configFile, 'utf8');
                 ctx.config.parse(file);
                 if (!ctx.config.verifyData()) {
                     throw new Error('Configuration file is not valid. Please update it with the correct information.');
@@ -438,114 +150,265 @@ exports.generateZip = function (args, options, logger) {
         },
         {
             title: 'Check skill directory',
-            task: function (ctx) {
+            task: ctx => {
                 ctx.dir = args.skill;
                 if (!fs.existsSync(ctx.dir)) {
-                    throw new Error("Skill directory not found. Please run 'lexigram init-skill " + ctx.dir + "' first.");
+                    throw new Error(`Skill directory not found. Please run 'lexigram init-skill ${ctx.dir}' first.`);
+                }
+            }
+        },
+        {
+            title: 'Remove old repo code',
+            task: ctx => {
+                fse.removeSync(`${ctx.dir}/source/repo`);
+                fse.ensureDir(`${ctx.dir}/source/repo`);
+            }
+        },
+        {
+            title: 'Download latest source code',
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                fse.removeSync(`${ctx.dir}-github.zip`);
+                let releaseUrl;
+                try {
+                    const url = ctx.dir === 'kanzi' ?
+                        'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+                        'https://api.github.com/repos/m0ngr31/koko/releases/latest';
+                    const request = yield axios.request({
+                        url
+                    });
+                    releaseUrl = request.data.zipball_url;
+                    const releaseRequest = yield axios.request({
+                        url: releaseUrl,
+                        responseType: 'arraybuffer'
+                    });
+                    fs.writeFileSync(`${ctx.dir}-github.zip`, releaseRequest.data);
+                }
+                catch (e) {
+                    ErrorLogger('Could not download latest release.');
+                    throw new Error('Could not download latest release. Please try again.');
+                }
+            })
+        },
+        {
+            title: 'Extract source code',
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield promisePipe(fs.createReadStream(`${ctx.dir}-github.zip`), unzip.Extract({ path: `${ctx.dir}/source/repo` }));
+                }
+                catch (e) {
+                    ErrorLogger('Could not extract source code.');
+                    throw new Error('Could not extract source code. Please try again.');
+                }
+            })
+        },
+        {
+            title: 'Extract source code - Part 2',
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                const readDir = fs.readdirSync(`${ctx.dir}/source/repo/`);
+                const githubFolder = readDir[0];
+                const readGithubFolder = fs.readdirSync(`${ctx.dir}/source/repo/${githubFolder}/`);
+                readGithubFolder.forEach(fileOrDir => {
+                    fse.moveSync(`${ctx.dir}/source/repo/${githubFolder}/${fileOrDir}`, `${ctx.dir}/source/repo/${fileOrDir}`);
+                });
+                fse.removeSync(`${ctx.dir}/source/repo/${githubFolder}`);
+                fse.removeSync(`${ctx.dir}-github.zip`);
+            })
+        },
+        {
+            title: 'Update skill data',
+            task: ctx => {
+                const skillJson = args.skill === 'kanzi' ? 'kanzi-skill.json' : 'koko-skill.json';
+                const skillConfig = fse.readJsonSync(`${__dirname}/../${skillJson}`);
+                if (changeApi) {
+                    delete skillConfig.manifest.apis;
+                    skillConfig.manifest.apis = {
+                        custom: {
+                            endpoint: {
+                                uri
+                            }
+                        }
+                    };
+                    if (args.skill === 'koko') {
+                        skillConfig.manifest.apis.custom.interfaces = [
+                            {
+                                "type": "AUDIO_PLAYER"
+                            }
+                        ];
+                    }
+                    if (uri.substring(0, 8) === 'https://') {
+                        skillConfig.manifest.apis.custom.endpoint.sslCertificateType = 'Wildcard';
+                    }
+                }
+                fse.removeSync(`${ctx.dir}/skill.json`);
+                fse.writeJsonSync(`${ctx.dir}/skill.json`, skillConfig, jsonOptions);
+            }
+        },
+        {
+            title: 'Update slot values',
+            task: (ctx, task) => __awaiter(this, void 0, void 0, function* () {
+                task.output = 'Generating slot data from Kodi.';
+                const isKanzi = args.skill === 'kanzi';
+                const origObj = {
+                    interactionModel: {
+                        languageModel: {
+                            invocationName,
+                            types: yield getSlots(ctx.dir, ctx.config),
+                            intents: []
+                        }
+                    }
+                };
+                task.output = 'Creating intent model.';
+                const englishObj = _.cloneDeep(origObj);
+                const germanObj = _.cloneDeep(origObj);
+                const frenchObj = _.cloneDeep(origObj);
+                const spanishObj = _.cloneDeep(origObj);
+                germanObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'de');
+                englishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'en');
+                if (isKanzi) {
+                    frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr');
+                    spanishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'es');
+                }
+                fse.removeSync(`${ctx.dir}/models/en-US.json`);
+                fse.removeSync(`${ctx.dir}/models/en-GB.json`);
+                fse.removeSync(`${ctx.dir}/models/en-CA.json`);
+                fse.removeSync(`${ctx.dir}/models/en-IN.json`);
+                fse.removeSync(`${ctx.dir}/models/en-AU.json`);
+                fse.removeSync(`${ctx.dir}/models/de-DE.json`);
+                fse.removeSync(`${ctx.dir}/models/fr-FR.json`);
+                fse.removeSync(`${ctx.dir}/models/es-ES.json`);
+                fse.writeJsonSync(`${ctx.dir}/models/en-US.json`, englishObj, jsonOptions);
+                fse.writeJsonSync(`${ctx.dir}/models/en-GB.json`, englishObj, jsonOptions);
+                fse.writeJsonSync(`${ctx.dir}/models/en-CA.json`, englishObj, jsonOptions);
+                fse.writeJsonSync(`${ctx.dir}/models/en-IN.json`, englishObj, jsonOptions);
+                fse.writeJsonSync(`${ctx.dir}/models/en-AU.json`, englishObj, jsonOptions);
+                fse.writeJsonSync(`${ctx.dir}/models/de-DE.json`, germanObj, jsonOptions);
+                if (isKanzi) {
+                    fse.writeJsonSync(`${ctx.dir}/models/fr-FR.json`, frenchObj, jsonOptions);
+                    fse.writeJsonSync(`${ctx.dir}/models/es-ES.json`, spanishObj, jsonOptions);
+                }
+            })
+        },
+        {
+            title: 'Deploy skill',
+            task: (ctx, task) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    task.output = 'Deploying skill information.';
+                    yield execa(askPath, ['deploy', '-t', 'skill'], { cwd: ctx.dir, timeout: 300000 });
+                    task.output = 'Deploying skill slot data and intents.';
+                    yield execa(askPath, ['deploy', '-t', 'model'], { cwd: ctx.dir, timeout: 600000 });
+                }
+                catch (e) {
+                    ErrorLogger(e);
+                    throw new Error('Error deploying. Please try again');
+                }
+            })
+        }
+    ]);
+    tasks.run().catch(err => { });
+});
+export const generateZip = (args, options, logger) => {
+    const tasks = new Listr([
+        {
+            title: 'Check config file',
+            task: ctx => {
+                ctx.configFile = 'kodi.config';
+                if (!fs.existsSync(ctx.configFile)) {
+                    throw new Error("Config file not found. Please run 'lexigram init-config' first.");
+                }
+            }
+        },
+        {
+            title: 'Validate config file',
+            task: ctx => {
+                ctx.config = new ParseIni();
+                const file = fs.readFileSync(ctx.configFile, 'utf8');
+                ctx.config.parse(file);
+                if (!ctx.config.verifyData()) {
+                    throw new Error('Configuration file is not valid. Please update it with the correct information.');
+                }
+            }
+        },
+        {
+            title: 'Check skill directory',
+            task: ctx => {
+                ctx.dir = args.skill;
+                if (!fs.existsSync(ctx.dir)) {
+                    throw new Error(`Skill directory not found. Please run 'lexigram init-skill ${ctx.dir}' first.`);
                 }
             }
         },
         {
             title: 'Remove old Lambda function code',
-            task: function (ctx) {
-                fse.removeSync(ctx.dir + "/source/skill");
-                fse.ensureDir(ctx.dir + "/source/skill");
+            task: ctx => {
+                fse.removeSync(`${ctx.dir}/source/skill`);
+                fse.ensureDir(`${ctx.dir}/source/skill`);
             }
         },
         {
             title: 'Download latest source code',
-            task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var releaseUrl, url, request, releaseRequest, e_6;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            fse.removeSync(ctx.dir + "-release.zip");
-                            _a.label = 1;
-                        case 1:
-                            _a.trys.push([1, 4, , 5]);
-                            url = ctx.dir === 'kanzi' ?
-                                'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
-                                'https://api.github.com/repos/m0ngr31/koko/releases/latest';
-                            return [4 /*yield*/, axios_1["default"].request({
-                                    url: url
-                                })];
-                        case 2:
-                            request = _a.sent();
-                            releaseUrl = request.data.assets[0].browser_download_url;
-                            return [4 /*yield*/, axios_1["default"].request({
-                                    url: releaseUrl,
-                                    responseType: 'arraybuffer'
-                                })];
-                        case 3:
-                            releaseRequest = _a.sent();
-                            fs.writeFileSync(ctx.dir + "-release.zip", releaseRequest.data);
-                            return [3 /*break*/, 5];
-                        case 4:
-                            e_6 = _a.sent();
-                            ErrorHandler_1.ErrorLogger('Could not download latest release.');
-                            throw new Error('Could not download latest release. Please try again.');
-                        case 5: return [2 /*return*/];
-                    }
-                });
-            }); }
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                fse.removeSync(`${ctx.dir}-release.zip`);
+                let releaseUrl;
+                try {
+                    const url = ctx.dir === 'kanzi' ?
+                        'https://api.github.com/repos/m0ngr31/kanzi/releases/latest' :
+                        'https://api.github.com/repos/m0ngr31/koko/releases/latest';
+                    const request = yield axios.request({
+                        url
+                    });
+                    releaseUrl = request.data.assets[0].browser_download_url;
+                    const releaseRequest = yield axios.request({
+                        url: releaseUrl,
+                        responseType: 'arraybuffer'
+                    });
+                    fs.writeFileSync(`${ctx.dir}-release.zip`, releaseRequest.data);
+                }
+                catch (e) {
+                    ErrorLogger('Could not download latest release.');
+                    throw new Error('Could not download latest release. Please try again.');
+                }
+            })
         },
         {
             title: 'Extract source code',
-            task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var e_7;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            _a.trys.push([0, 2, , 3]);
-                            return [4 /*yield*/, promisePipe(fs.createReadStream(ctx.dir + "-release.zip"), unzip.Extract({ path: ctx.dir + "/source/skill" }))];
-                        case 1:
-                            _a.sent();
-                            fse.removeSync(ctx.dir + "-release.zip");
-                            return [3 /*break*/, 3];
-                        case 2:
-                            e_7 = _a.sent();
-                            ErrorHandler_1.ErrorLogger('Could not extract source code.');
-                            throw new Error('Could not extract source code. Please try again.');
-                        case 3: return [2 /*return*/];
-                    }
-                });
-            }); }
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield promisePipe(fs.createReadStream(`${ctx.dir}-release.zip`), unzip.Extract({ path: `${ctx.dir}/source/skill` }));
+                    fse.removeSync(`${ctx.dir}-release.zip`);
+                }
+                catch (e) {
+                    ErrorLogger('Could not extract source code.');
+                    throw new Error('Could not extract source code. Please try again.');
+                }
+            })
         },
         {
             title: 'Copy config file',
-            task: function (ctx) {
+            task: ctx => {
                 try {
-                    fse.copySync(ctx.configFile, ctx.dir + "/source/skill/" + ctx.configFile);
+                    fse.copySync(ctx.configFile, `${ctx.dir}/source/skill/${ctx.configFile}`);
                 }
                 catch (e) {
-                    ErrorHandler_1.ErrorLogger('Could not copy config file.');
+                    ErrorLogger('Could not copy config file.');
                     throw new Error('Could not copy config file. Please try again.');
                 }
             }
         },
         {
             title: 'Create deployment zip file',
-            task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
-                var archive;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            fse.removeSync(ctx.dir + "-lambda-upload.zip");
-                            archive = archiver(ctx.dir + "-lambda-upload.zip", {
-                                zlib: { level: 9 }
-                            });
-                            archive.directory(ctx.dir + "/source/skill", false);
-                            return [4 /*yield*/, archive.finalize()];
-                        case 1:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
+            task: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                fse.removeSync(`${ctx.dir}-lambda-upload.zip`);
+                const archive = archiver(`${ctx.dir}-lambda-upload.zip`, {
+                    zlib: { level: 9 }
                 });
-            }); }
+                archive.directory(`${ctx.dir}/source/skill`, false);
+                yield archive.finalize();
+            })
         }
     ]);
     tasks.run()
-        .then(function () {
-        logger.info("\nFile is ready. Please upload '" + args.skill + "-lambda-upload.zip' to AWS Lambda.");
-    })["catch"](function (err) { });
+        .then(() => {
+        logger.info(`\nFile is ready. Please upload '${args.skill}-lambda-upload.zip' to AWS Lambda.`);
+    })
+        .catch(err => { });
 };

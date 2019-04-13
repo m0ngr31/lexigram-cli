@@ -17,6 +17,8 @@ export const getIntents = (skill, lang) => {
     file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.de.txt`);
   } else if (lang === 'fr') {
     file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.fr.txt`);
+  } else if (lang === 'es') {
+    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.es.txt`);
   }
 
   const intentsFile = path.join(process.cwd(), `${skill}/source/repo/speech_assets/IntentSchema.json`)
