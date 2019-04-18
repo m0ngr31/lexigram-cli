@@ -317,7 +317,9 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         fse.removeSync(`${ctx.dir}/models/en-AU.json`);
         fse.removeSync(`${ctx.dir}/models/de-DE.json`);
         fse.removeSync(`${ctx.dir}/models/fr-FR.json`);
+        fse.removeSync(`${ctx.dir}/models/fr-CA.json`);
         fse.removeSync(`${ctx.dir}/models/es-ES.json`);
+        fse.removeSync(`${ctx.dir}/models/es-MX.json`);
 
         fse.writeJsonSync(`${ctx.dir}/models/en-US.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/en-GB.json`, englishObj, jsonOptions);
@@ -328,7 +330,9 @@ export const updateOrDeploySkill = async (args, options, logger) => {
 
         if (isKanzi) {
           fse.writeJsonSync(`${ctx.dir}/models/fr-FR.json`, frenchObj, jsonOptions);
+          fse.writeJsonSync(`${ctx.dir}/models/fr-CA.json`, frenchObj, jsonOptions);
           fse.writeJsonSync(`${ctx.dir}/models/es-ES.json`, spanishObj, jsonOptions);
+          fse.writeJsonSync(`${ctx.dir}/models/es-MX.json`, spanishObj, jsonOptions);
         }
       }
     },
