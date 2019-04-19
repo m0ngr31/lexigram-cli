@@ -1,22 +1,36 @@
-export default class ParseIni {
-    constructor() {
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+exports.__esModule = true;
+var ParseIni = /** @class */ (function () {
+    function ParseIni() {
         this.ini = '';
     }
-    cleanComments(line) {
-        let cleanLine = line;
+    ParseIni.prototype.cleanComments = function (line) {
+        var cleanLine = line;
+        // Skip comments
         if (cleanLine.indexOf('#') > -1)
             cleanLine = cleanLine.substring(0, cleanLine.indexOf('#'));
         if (cleanLine.indexOf(';') > -1)
             cleanLine = cleanLine.substring(0, cleanLine.lastIndexOf(';'));
         cleanLine = cleanLine.trim();
         return cleanLine;
-    }
-    headerCheck(line) {
+    };
+    ParseIni.prototype.headerCheck = function (line) {
         return line[0] === '[' && line.substring(line.length - 1) === ']';
-    }
-    destructureValue(line) {
-        let cleanLine = line;
-        let response = '';
+    };
+    ParseIni.prototype.destructureValue = function (line) {
+        var cleanLine = line;
+        var response = '';
         if (cleanLine.indexOf('=') > -1) {
             response = cleanLine.substring(cleanLine.indexOf('=') + 1);
             cleanLine = cleanLine.substring(0, cleanLine.indexOf('='));
@@ -24,18 +38,21 @@ export default class ParseIni {
             response = response.trim();
         }
         return [cleanLine, response];
-    }
-    setOjb(obj) {
+    };
+    ParseIni.prototype.setOjb = function (obj) {
+        var _a;
         if (!this.ini && !(this.ini.length === 0))
             return;
-        const objCheck = Object.assign({}, obj);
-        const lines = this.ini.split(/\n/i);
-        let lastHeader = 'unset';
-        let foundHeader = -1;
-        let foundMatch = false;
-        for (let a = 0; a < lines.length; a++) {
-            let cleanLine = this.cleanComments(lines[a]);
+        var objCheck = __assign({}, obj);
+        var lines = this.ini.split(/\n/i);
+        var lastHeader = 'unset';
+        var foundHeader = -1;
+        var foundMatch = false;
+        // Adding obj data to existing ini sheet
+        for (var a = 0; a < lines.length; a++) {
+            var cleanLine = this.cleanComments(lines[a]);
             if (cleanLine.length > 0) {
+                // Determine if it's a header or setting
                 if (this.headerCheck(cleanLine)) {
                     if (lastHeader !== 'unset') {
                         delete objCheck[lastHeader];
@@ -45,49 +62,53 @@ export default class ParseIni {
                         continue;
                 }
                 else {
-                    let response;
-                    [cleanLine, response] = this.destructureValue(cleanLine);
+                    var response = void 0;
+                    _a = this.destructureValue(cleanLine), cleanLine = _a[0], response = _a[1];
                     if (!obj[lastHeader] || (obj[lastHeader] && !obj[lastHeader][cleanLine]))
                         continue;
                     if (obj[lastHeader][cleanLine]) {
-                        lines[a] = `${cleanLine}=${obj[lastHeader][cleanLine]}`;
+                        lines[a] = cleanLine + "=" + obj[lastHeader][cleanLine];
                     }
                 }
             }
         }
-        for (let key in objCheck) {
+        // Adding in data that isn't in there by default
+        for (var key in objCheck) {
             if (objCheck.hasOwnProperty(key)) {
-                lines.push(`\n[${key}]`);
-                for (let subkey in objCheck[key]) {
+                lines.push("\n[" + key + "]");
+                for (var subkey in objCheck[key]) {
                     if (objCheck[key].hasOwnProperty(subkey)) {
-                        lines.push(`${subkey}=${objCheck[key][subkey]}`);
+                        lines.push(subkey + "=" + objCheck[key][subkey]);
                     }
                 }
             }
         }
-        const newLines = lines.join('\n');
+        var newLines = lines.join('\n');
+        // Get new schema
         this.parse(newLines);
-    }
-    set(header, field, value) {
+    };
+    ParseIni.prototype.set = function (header, field, value) {
+        var _a;
         if (!this.ini)
             return;
-        const lines = this.ini.split(/\n/i);
-        let lastHeader = 'unset';
-        let foundHeader = -1;
-        let foundMatch = false;
-        for (let a = 0; a < lines.length; a++) {
-            let cleanLine = this.cleanComments(lines[a]);
+        var lines = this.ini.split(/\n/i);
+        var lastHeader = 'unset';
+        var foundHeader = -1;
+        var foundMatch = false;
+        for (var a = 0; a < lines.length; a++) {
+            var cleanLine = this.cleanComments(lines[a]);
             if (cleanLine.length > 0) {
+                // Determine if it's a header or setting
                 if (this.headerCheck(cleanLine)) {
                     lastHeader = cleanLine.replace(/(\[|\])/g, '');
                     if (lastHeader === header)
                         foundHeader = a;
                 }
                 else {
-                    let response;
-                    [cleanLine, response] = this.destructureValue(cleanLine);
+                    var response = void 0;
+                    _a = this.destructureValue(cleanLine), cleanLine = _a[0], response = _a[1];
                     if (lastHeader === header && field === cleanLine) {
-                        lines[a] = `${field}=${value}`;
+                        lines[a] = field + "=" + value;
                         foundMatch = true;
                         break;
                     }
@@ -95,14 +116,15 @@ export default class ParseIni {
             }
         }
         if (!foundMatch && foundHeader > -1)
-            lines.splice(foundHeader + 1, 0, `${field}=${value}`);
-        const newLines = lines.join('\n');
+            lines.splice(foundHeader + 1, 0, field + "=" + value);
+        var newLines = lines.join('\n');
+        // Get new schema
         this.parse(newLines);
-    }
-    verifyData() {
+    };
+    ParseIni.prototype.verifyData = function () {
         try {
             if (this.schema && (this.schema['default'] || this.schema['DEFAULT'])) {
-                let data;
+                var data = void 0;
                 if (this.schema['default']) {
                     data = this.schema['default'];
                 }
@@ -131,19 +153,22 @@ export default class ParseIni {
         catch (e) {
             return false;
         }
-    }
-    parse(ini) {
-        const lines = ini.split(/\n/i);
-        let schema = {};
-        let lastHeader = 'unset';
-        lines.forEach(line => {
-            let cleanLine = this.cleanComments(line);
+    };
+    ParseIni.prototype.parse = function (ini) {
+        var _this = this;
+        var lines = ini.split(/\n/i);
+        var schema = {};
+        var lastHeader = 'unset';
+        lines.forEach(function (line) {
+            var _a;
+            var cleanLine = _this.cleanComments(line);
             if (cleanLine.length > 0) {
-                if (this.headerCheck(cleanLine))
+                // Determine if it's a header or setting
+                if (_this.headerCheck(cleanLine))
                     lastHeader = cleanLine.replace(/(\[|\])/g, '');
                 else {
-                    let response;
-                    [cleanLine, response] = this.destructureValue(cleanLine);
+                    var response = void 0;
+                    _a = _this.destructureValue(cleanLine), cleanLine = _a[0], response = _a[1];
                     if (!schema[lastHeader])
                         schema[lastHeader] = {};
                     schema[lastHeader][cleanLine] = response;
@@ -152,5 +177,7 @@ export default class ParseIni {
         });
         this.schema = schema;
         this.ini = ini;
-    }
-}
+    };
+    return ParseIni;
+}());
+exports["default"] = ParseIni;
