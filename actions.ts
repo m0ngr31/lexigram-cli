@@ -109,14 +109,18 @@ export const updateOrDeploySkill = async (args, options, logger) => {
   let changeApi = false;
 
   if (args.skill === 'kanzi') {
-    const invocationOpts = ['Kanzi', 'Kodi'];
-    let invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
+    if (options.invocationName && options.invocationName.length) {
+      invocationName = options.invocationName.toLowerCase();
+    } else {
+      const invocationOpts = ['Kanzi', 'Kodi'];
+      let invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
 
-    if (invocationAnswer === -1) {
-      return;
+      if (invocationAnswer === -1) {
+        return;
+      }
+
+      invocationName = invocationOpts[invocationAnswer].toLowerCase();
     }
-
-    invocationName = invocationOpts[invocationAnswer].toLowerCase();
   }
 
   if (fs.existsSync(args.skill) && fs.existsSync(`${args.skill}/skill.json`)) {
@@ -127,6 +131,12 @@ export const updateOrDeploySkill = async (args, options, logger) => {
       changeApi = true;
       uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
     }
+  }
+
+  if (options.url && options.url.length) {
+    getInput = false;
+    changeApi = true;
+    uri = options.url;
   }
 
   while (getInput) {
@@ -180,6 +190,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     },
     {
       title: 'Remove old repo code',
+      skip: ctx => options.sourceDir && options.sourceDir.length,
       task: ctx => {
         fse.removeSync(`${ctx.dir}/source/repo`);
         fse.ensureDir(`${ctx.dir}/source/repo`);
@@ -187,6 +198,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     },
     {
       title: 'Download latest source code',
+      skip: ctx => options.sourceDir && options.sourceDir.length,
       task: async ctx => {
         fse.removeSync(`${ctx.dir}-github.zip`);
 
@@ -217,6 +229,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     },
     {
       title: 'Extract source code',
+      skip: ctx => options.sourceDir && options.sourceDir.length,
       task: async ctx => {
         try {
           await promisePipe(
@@ -231,6 +244,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
     },
     {
       title: 'Extract source code - Part 2',
+      skip: ctx => options.sourceDir && options.sourceDir.length,
       task: async ctx => {
         const readDir = fs.readdirSync(`${ctx.dir}/source/repo/`);
         const githubFolder = readDir[0];
@@ -302,12 +316,14 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         const frenchObj = _.cloneDeep(origObj);
         const spanishObj = _.cloneDeep(origObj);
 
-        germanObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'de');
-        englishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'en');
+        const fullDir = options.sourceDir && options.sourceDir.length ? options.sourceDir : null;
+
+        germanObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'de', fullDir);
+        englishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'en', fullDir);
 
         if (isKanzi) {
-          frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr');
-          spanishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'es');
+          frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr', fullDir);
+          spanishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'es', fullDir);
         }
 
         fse.removeSync(`${ctx.dir}/models/en-US.json`);

@@ -7,21 +7,32 @@ import axios from 'axios';
 
 import {ErrorLogger} from './ErrorHandler';
 
-export const getIntents = (skill, lang) => {
+export const getIntents = (skill, lang, fullDir) => {
   const intents: any[] = [];
   let file;
+  let firstPath = '';
+  let secondPath = fullDir;
 
-  if (lang === 'en') {
-    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.en.txt`);
-  } else if (lang === 'de') {
-    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.de.txt`);
-  } else if (lang === 'fr') {
-    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.fr.txt`);
-  } else if (lang === 'es') {
-    file = path.join(process.cwd(), `${skill}/source/repo/speech_assets/SampleUtterances.es.txt`);
+  if (!fullDir) {
+    firstPath = process.cwd();
+    secondPath = `${skill}/source/repo`;
   }
 
-  const intentsFile = path.join(process.cwd(), `${skill}/source/repo/speech_assets/IntentSchema.json`)
+  while (secondPath.slice(-1) === '/' || secondPath.slice(-1) === '\\') {
+    secondPath = secondPath.slice(0, -1);
+  }
+
+  if (lang === 'en') {
+    file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.en.txt`);
+  } else if (lang === 'de') {
+    file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.de.txt`);
+  } else if (lang === 'fr') {
+    file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.fr.txt`);
+  } else if (lang === 'es') {
+    file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.es.txt`);
+  }
+
+  const intentsFile = path.join(firstPath, `${secondPath}/speech_assets/IntentSchema.json`)
   const parsedIntents = fse.readJsonSync(intentsFile);
 
   const rawUtterances = fs.readFileSync(file, 'utf8');

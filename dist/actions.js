@@ -161,12 +161,17 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
         invocationName = args.skill;
         changeApi = false;
         if (args.skill === 'kanzi') {
-            invocationOpts = ['Kanzi', 'Kodi'];
-            invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
-            if (invocationAnswer === -1) {
-                return [2 /*return*/];
+            if (options.invocationName && options.invocationName.length) {
+                invocationName = options.invocationName.toLowerCase();
             }
-            invocationName = invocationOpts[invocationAnswer].toLowerCase();
+            else {
+                invocationOpts = ['Kanzi', 'Kodi'];
+                invocationAnswer = readlineSync.keyInSelect(invocationOpts, 'What would you like your invocation name to be?');
+                if (invocationAnswer === -1) {
+                    return [2 /*return*/];
+                }
+                invocationName = invocationOpts[invocationAnswer].toLowerCase();
+            }
         }
         if (fs.existsSync(args.skill) && fs.existsSync(args.skill + "/skill.json")) {
             existingSkillConfig = fse.readJsonSync(args.skill + "/skill.json");
@@ -175,6 +180,11 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                 changeApi = true;
                 uri = existingSkillConfig.manifest.apis.custom.endpoint.uri;
             }
+        }
+        if (options.url && options.url.length) {
+            getInput = false;
+            changeApi = true;
+            uri = options.url;
         }
         while (getInput) {
             answer = readlineSync.question("What's the URL for your skill server? (ex. https://... or arn:...). Press enter to skip. ");
@@ -223,6 +233,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             },
             {
                 title: 'Remove old repo code',
+                skip: function (ctx) { return options.sourceDir && options.sourceDir.length; },
                 task: function (ctx) {
                     fse.removeSync(ctx.dir + "/source/repo");
                     fse.ensureDir(ctx.dir + "/source/repo");
@@ -230,6 +241,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             },
             {
                 title: 'Download latest source code',
+                skip: function (ctx) { return options.sourceDir && options.sourceDir.length; },
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
                     var releaseUrl, url, request, releaseRequest, e_3;
                     return __generator(this, function (_a) {
@@ -267,6 +279,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             },
             {
                 title: 'Extract source code',
+                skip: function (ctx) { return options.sourceDir && options.sourceDir.length; },
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
                     var e_4;
                     return __generator(this, function (_a) {
@@ -288,6 +301,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             },
             {
                 title: 'Extract source code - Part 2',
+                skip: function (ctx) { return options.sourceDir && options.sourceDir.length; },
                 task: function (ctx) { return __awaiter(_this, void 0, void 0, function () {
                     var readDir, githubFolder, readGithubFolder;
                     return __generator(this, function (_a) {
@@ -335,7 +349,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Update slot values',
                 task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj, spanishObj;
+                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj, spanishObj, fullDir;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
@@ -358,11 +372,12 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 germanObj = _.cloneDeep(origObj);
                                 frenchObj = _.cloneDeep(origObj);
                                 spanishObj = _.cloneDeep(origObj);
-                                germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de');
-                                englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en');
+                                fullDir = options.sourceDir && options.sourceDir.length ? options.sourceDir : null;
+                                germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de', fullDir);
+                                englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en', fullDir);
                                 if (isKanzi) {
-                                    frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr');
-                                    spanishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'es');
+                                    frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr', fullDir);
+                                    spanishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'es', fullDir);
                                 }
                                 fse.removeSync(ctx.dir + "/models/en-US.json");
                                 fse.removeSync(ctx.dir + "/models/en-GB.json");

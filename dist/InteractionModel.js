@@ -54,22 +54,31 @@ var path = require("path");
 var process = require("process");
 var axios_1 = require("axios");
 var ErrorHandler_1 = require("./ErrorHandler");
-exports.getIntents = function (skill, lang) {
+exports.getIntents = function (skill, lang, fullDir) {
     var intents = [];
     var file;
+    var firstPath = '';
+    var secondPath = fullDir;
+    if (!fullDir) {
+        firstPath = process.cwd();
+        secondPath = skill + "/source/repo";
+    }
+    while (secondPath.slice(-1) === '/' || secondPath.slice(-1) === '\\') {
+        secondPath = secondPath.slice(0, -1);
+    }
     if (lang === 'en') {
-        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.en.txt");
+        file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.en.txt");
     }
     else if (lang === 'de') {
-        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.de.txt");
+        file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.de.txt");
     }
     else if (lang === 'fr') {
-        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.fr.txt");
+        file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.fr.txt");
     }
     else if (lang === 'es') {
-        file = path.join(process.cwd(), skill + "/source/repo/speech_assets/SampleUtterances.es.txt");
+        file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.es.txt");
     }
-    var intentsFile = path.join(process.cwd(), skill + "/source/repo/speech_assets/IntentSchema.json");
+    var intentsFile = path.join(firstPath, secondPath + "/speech_assets/IntentSchema.json");
     var parsedIntents = fse.readJsonSync(intentsFile);
     var rawUtterances = fs.readFileSync(file, 'utf8');
     var utterances = rawUtterances.split(/\n/i);
