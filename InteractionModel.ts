@@ -30,6 +30,8 @@ export const getIntents = (skill, lang, fullDir) => {
     file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.fr.txt`);
   } else if (lang === 'es') {
     file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.es.txt`);
+  } else if (lang === 'it') {
+    file = path.join(firstPath, `${secondPath}/speech_assets/SampleUtterances.it.txt`);
   }
 
   const intentsFile = path.join(firstPath, `${secondPath}/speech_assets/IntentSchema.json`)
