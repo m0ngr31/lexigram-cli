@@ -115,6 +115,25 @@
           "smallIconUri": "https://i.imgur.com/XhclYmy.png",
           "description": "Koko is the only solution for streaming music from Kodi so you don't need to have your TV on when you want to listen to music.\n\nAll it takes is to follow the simple setup instructions at https://lexigr.am and you'll be up and running in no time!",
           "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
+        },
+        "it-IT": {
+          "summary": "Manda la tua musica in stream da Kodi ad Alexa",
+          "examplePhrases": [
+            "Alexa, chiedi a Koko di mettere su Biagio Antonacci",
+            "Alexa, di a Koko di eseguire una playlist alternativa",
+            "Alexa, chiedi a Koko di mettere Sogno-B di Daniele Silvestri "
+          ],
+          "keywords": [
+            "kodi",
+            "media",
+            "center",
+            "musica",
+            "streaming"
+          ],
+          "name": "Koko",
+          "smallIconUri": "https://i.imgur.com/XhclYmy.png",
+          "description": "Koko è la soluzione unica per mandare musica in stream da Kodi permettendoti di non dover accendere la TV quando desideri ascoltare musica.\n\nDevi soltanto seguire le semplici istruzioni che trovi a https://lexigr.am ed in poco tempo sei prontoa partire!",
+          "largeIconUri": "https://i.imgur.com/ZKLY7Ne.png"
         }
       },
       "isAvailableWorldwide": true,
