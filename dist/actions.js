@@ -372,9 +372,11 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 germanObj = _.cloneDeep(origObj);
                                 frenchObj = _.cloneDeep(origObj);
                                 spanishObj = _.cloneDeep(origObj);
+                                italianObj = _.cloneDeep(origObj);
                                 fullDir = options.sourceDir && options.sourceDir.length ? options.sourceDir : null;
                                 germanObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'de', fullDir);
                                 englishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'en', fullDir);
+                                italianObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'it', fullDir);
                                 if (isKanzi) {
                                     frenchObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'fr', fullDir);
                                     spanishObj.interactionModel.languageModel.intents = InteractionModel_1.getIntents(ctx.dir, 'es', fullDir);
@@ -389,12 +391,14 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
                                 fse.removeSync(ctx.dir + "/models/fr-CA.json");
                                 fse.removeSync(ctx.dir + "/models/es-ES.json");
                                 fse.removeSync(ctx.dir + "/models/es-MX.json");
+                                fse.removeSync(ctx.dir + "/models/it-IT.json");
                                 fse.writeJsonSync(ctx.dir + "/models/en-US.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-GB.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-CA.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-IN.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/en-AU.json", englishObj, jsonOptions);
                                 fse.writeJsonSync(ctx.dir + "/models/de-DE.json", germanObj, jsonOptions);
+                                fse.writeJsonSync(ctx.dir + "/models/it-IT.json", italianObj, jsonOptions);
                                 if (isKanzi) {
                                     fse.writeJsonSync(ctx.dir + "/models/fr-FR.json", frenchObj, jsonOptions);
                                     fse.writeJsonSync(ctx.dir + "/models/fr-CA.json", frenchObj, jsonOptions);

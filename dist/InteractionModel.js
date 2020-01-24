@@ -78,6 +78,9 @@ exports.getIntents = function (skill, lang, fullDir) {
     else if (lang === 'es') {
         file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.es.txt");
     }
+    else if (lang === 'it') {
+        file = path.join(firstPath, secondPath + "/speech_assets/SampleUtterances.it.txt");
+    }
     var intentsFile = path.join(firstPath, secondPath + "/speech_assets/IntentSchema.json");
     var parsedIntents = fse.readJsonSync(intentsFile);
     var rawUtterances = fs.readFileSync(file, 'utf8');

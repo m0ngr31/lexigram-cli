@@ -315,11 +315,13 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         const germanObj = _.cloneDeep(origObj);
         const frenchObj = _.cloneDeep(origObj);
         const spanishObj = _.cloneDeep(origObj);
+        const italianObj = _.cloneDeep(origObj);
 
         const fullDir = options.sourceDir && options.sourceDir.length ? options.sourceDir : null;
 
         germanObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'de', fullDir);
         englishObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'en', fullDir);
+        italianObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'it', fullDir);
 
         if (isKanzi) {
           frenchObj.interactionModel.languageModel.intents = getIntents(ctx.dir, 'fr', fullDir);
@@ -336,6 +338,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         fse.removeSync(`${ctx.dir}/models/fr-CA.json`);
         fse.removeSync(`${ctx.dir}/models/es-ES.json`);
         fse.removeSync(`${ctx.dir}/models/es-MX.json`);
+        fse.removeSync(`${ctx.dir}/models/it-IT.json`);
 
         fse.writeJsonSync(`${ctx.dir}/models/en-US.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/en-GB.json`, englishObj, jsonOptions);
@@ -343,6 +346,7 @@ export const updateOrDeploySkill = async (args, options, logger) => {
         fse.writeJsonSync(`${ctx.dir}/models/en-IN.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/en-AU.json`, englishObj, jsonOptions);
         fse.writeJsonSync(`${ctx.dir}/models/de-DE.json`, germanObj, jsonOptions);
+        fse.writeJsonSync(`${ctx.dir}/models/it-IT.json`, italianObj, jsonOptions);
 
         if (isKanzi) {
           fse.writeJsonSync(`${ctx.dir}/models/fr-FR.json`, frenchObj, jsonOptions);
