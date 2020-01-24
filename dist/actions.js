@@ -349,7 +349,7 @@ exports.updateOrDeploySkill = function (args, options, logger) { return __awaite
             {
                 title: 'Update slot values',
                 task: function (ctx, task) { return __awaiter(_this, void 0, void 0, function () {
-                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj, spanishObj, fullDir;
+                    var isKanzi, origObj, _a, _b, _c, englishObj, germanObj, frenchObj, spanishObj, italianObj, fullDir;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
