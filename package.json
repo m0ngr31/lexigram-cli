@@ -18,7 +18,7 @@
   "dependencies": {
     "archiver-promise": "^1.0.0",
     "ask-cli": "1.1.2",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "caporal": "^0.9.0",
     "exec-sh": "^0.2.1",
     "execa": "^0.10.0",
